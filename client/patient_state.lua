@@ -30,7 +30,7 @@ local function hasSkill(skill)
     return false
 end
 
-local function buildInteractions(snapshot)
+local function buildInteractionBadges()
     local items = {
         hasSkill('cpr') and 'RCP disponible' or nil,
         hasSkill('pain_management') and 'Medicación ligera' or nil,
@@ -38,12 +38,41 @@ local function buildInteractions(snapshot)
         hasSkill('advanced_meds') and 'Farmacia avanzada' or nil
     }
 
-    snapshot.interactions = {}
+    local badges = {}
     for _, label in ipairs(items) do
         if label then
-            snapshot.interactions[#snapshot.interactions + 1] = label
+            badges[#badges + 1] = label
         end
     end
+
+    return badges
+end
+
+local function buildItemTools()
+    local tools = {}
+    local definitions = {
+        { id = 'bandage', label = 'Vendas', description = 'Detén hemorragias leves y estabiliza heridas.' },
+        { id = 'defibrillator', label = 'Desfibrilador', description = 'Solo para pacientes inconscientes.' },
+        { id = 'burncream', label = 'Crema para quemaduras', description = 'Calma las quemaduras y mejora la recuperación.' },
+        { id = 'suturekit', label = 'Kit de suturas', description = 'Cierra heridas profundas para frenar el sangrado.' },
+        { id = 'tweezers', label = 'Pinzas', description = 'Extrae fragmentos y reduce el daño en extremidades.' },
+        { id = 'icepack', label = 'Compresa fría', description = 'Reduce inflamación y estabiliza el pulso.' }
+    }
+
+    for _, entry in ipairs(definitions) do
+        if QBCore.Functions.HasItem(entry.id) then
+            tools[#tools + 1] = entry
+        end
+    end
+
+    return tools
+end
+
+local function buildInteractions(snapshot)
+    snapshot.interactions = {
+        badges = buildInteractionBadges(),
+        tools = buildItemTools()
+    }
 end
 
 local function collectInjuries()

@@ -521,11 +521,27 @@ QBCore.Functions.CreateUseableItem('painkillers', function(source, item)
 end)
 
 QBCore.Functions.CreateUseableItem('firstaid', function(source, item)
-	local src = source
-	local Player = QBCore.Functions.GetPlayer(src)
-	if Player.Functions.GetItemByName(item.name) ~= nil then
-		TriggerClientEvent('hospital:client:UseFirstAid', src)
-	end
+        local src = source
+        local Player = QBCore.Functions.GetPlayer(src)
+        if Player.Functions.GetItemByName(item.name) ~= nil then
+                TriggerClientEvent('hospital:client:UseFirstAid', src)
+        end
+end)
+
+RegisterNetEvent('hospital:server:ConsumeTreatmentItem', function(item)
+        local src = source
+        if not item then return end
+
+        local Player = QBCore.Functions.GetPlayer(src)
+        if not Player then return end
+
+        local itemData = Player.Functions.GetItemByName(item)
+        if itemData then
+                Player.Functions.RemoveItem(item, 1)
+                if QBCore.Shared.Items[item] then
+                        TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items[item], 'remove')
+                end
+        end
 end)
 
 exports('GetDoctorCount', function() return doctorCount end)
