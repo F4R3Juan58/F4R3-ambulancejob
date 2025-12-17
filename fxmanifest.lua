@@ -6,7 +6,7 @@ use_fxv2_oal 'yes'
 lua54 'yes'
 game 'gta5'
 version '1.0.3'
-author 'Arius Scripts'
+author 'F4R3'
 description 'Advanced ambulance job with intergrated death system'
 
 

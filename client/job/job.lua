@@ -24,7 +24,7 @@ local SetCurrentPedWeapon          = SetCurrentPedWeapon
 
 local function checkPatient(target)
     local targetServerId = GetPlayerServerId(NetworkGetPlayerIndexFromPed(target))
-    local data = lib.callback.await('ars_ambulancejob:getData', false, targetServerId)
+    local data = lib.callback.await('F4R3-ambulancejob:getData', false, targetServerId)
     local isDead = data.status.isDead
     local status = isDead and locale("patient_not_conscious") or locale("patient_conscious")
 
@@ -91,7 +91,7 @@ local function checkPatient(target)
                 dataToSend.heading = playerHeading
                 dataToSend.location = playerLocation
                 dataToSend.coords = playerCoords
-                TriggerServerEvent("ars_ambulancejob:healPlayer", dataToSend)
+                TriggerServerEvent("F4R3-ambulancejob:healPlayer", dataToSend)
             end,
         }
 
@@ -121,7 +121,7 @@ function createDistressCall()
         end
     end
 
-    local input = lib.inputDialog('Arius Ambulance', {
+    local input = lib.inputDialog('F4R3 Ambulance', {
         { type = 'input', label = 'Message', description = 'a message to send to medics online', required = true },
     })
     if not input then return end
@@ -140,7 +140,7 @@ function createDistressCall()
         data.gps = playerCoords
         data.location = GetStreetNameFromHashKey(current)
 
-        TriggerServerEvent("ars_ambulancejob:createDistressCall", data)
+        TriggerServerEvent("F4R3-ambulancejob:createDistressCall", data)
     end
 
 
@@ -156,7 +156,7 @@ function openDistressCalls()
     local playerPed = cache.ped or PlayerPedId()
     local playerCoords = cache.coords or GetEntityCoords(playerPed)
 
-    local distressCalls = lib.callback.await('ars_ambulancejob:getDistressCalls', false)
+    local distressCalls = lib.callback.await('F4R3-ambulancejob:getDistressCalls', false)
 
     local calls = {}
 
@@ -221,7 +221,7 @@ function openDistressCalls()
                             arrow       = true,
                             description = "Complete the call if you risolved it",
                             onSelect    = function()
-                                TriggerServerEvent("ars_ambulancejob:callCompleted", call)
+                                TriggerServerEvent("F4R3-ambulancejob:callCompleted", call)
                                 utils.showNotification("Call closed")
                                 ClearPedTasks(playerPed)
                                 DeleteEntity(tablet)
@@ -279,7 +279,7 @@ addGlobalPlayer({
 })
 
 
-RegisterNetEvent("ars_ambulancejob:playHealAnim", function(data)
+RegisterNetEvent("F4R3-ambulancejob:playHealAnim", function(data)
     local playerPed = cache.ped or PlayerPedId()
     local coords = GetEntityCoords(playerPed)
 
@@ -359,7 +359,7 @@ RegisterNetEvent("ars_ambulancejob:playHealAnim", function(data)
 end)
 
 
-RegisterNetEvent("ars_ambulancejob:createDistressCall", function(name)
+RegisterNetEvent("F4R3-ambulancejob:createDistressCall", function(name)
     if not hasJob(Config.EmsJobs) then return end
 
     lib.notify({

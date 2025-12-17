@@ -41,7 +41,7 @@ function stopPlayerDeath()
     NetworkResurrectLocalPlayer(coords.x, coords.y, coords.z, coords.w, false, false)
 
     local deathStatus = { isDead = false }
-    TriggerServerEvent('ars_ambulancejob:updateDeathStatus', deathStatus)
+    TriggerServerEvent('F4R3-ambulancejob:updateDeathStatus', deathStatus)
 
     playerPed = PlayerPedId()
 
@@ -74,7 +74,7 @@ function healPlayer()
     healStatus()
 end
 
-RegisterNetEvent("ars_ambulancejob:healPlayer", function(data)
+RegisterNetEvent("F4R3-ambulancejob:healPlayer", function(data)
     if data.revive then
         stopPlayerDeath()
     elseif data.injury then
@@ -88,7 +88,7 @@ local function respawnPlayer()
     local playerPed = cache.ped or PlayerPedId()
 
     if Config.RemoveItemsOnRespawn then
-        TriggerServerEvent("ars_ambulancejob:removeInventory")
+        TriggerServerEvent("F4R3-ambulancejob:removeInventory")
     end
 
     lib.requestAnimDict("anim@gangops@morgue@table@")
@@ -245,7 +245,7 @@ end
 function onPlayerLoaded()
     exports.spawnmanager:setAutoSpawn(false) -- for qbcore
 
-    local data = lib.callback.await('ars_ambulancejob:getDeathStatus', false)
+    local data = lib.callback.await('F4R3-ambulancejob:getDeathStatus', false)
 
     if data?.isDead then
         initPlayerDeath(true)
@@ -274,7 +274,7 @@ AddEventHandler('gameEventTriggered', function(event, data)
         deathData.isDead = true
         deathData.weapon = weapon
 
-        TriggerServerEvent('ars_ambulancejob:updateDeathStatus', deathData)
+        TriggerServerEvent('F4R3-ambulancejob:updateDeathStatus', deathData)
         LocalPlayer.state:set("dead", true, true)
         initPlayerDeath()
     end

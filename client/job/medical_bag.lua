@@ -13,7 +13,7 @@ local function openMedicalBag()
 
     TaskStartScenarioInPlace(playerPed, "CODE_HUMAN_MEDIC_TEND_TO_DEAD")
 
-    lib.callback('ars_ambulancejob:openMedicalBag', false, function(stash)
+    lib.callback('F4R3-ambulancejob:openMedicalBag', false, function(stash)
         exports.ox_inventory:openInventory("stash", stash)
     end)
 end
@@ -60,7 +60,7 @@ local function placeMedicalBag()
     })
 end
 
-RegisterNetEvent("ars_ambulancejob:placeMedicalBag", function()
+RegisterNetEvent("F4R3-ambulancejob:placeMedicalBag", function()
     if not hasJob(Config.EmsJobs) then return end
 
     placeMedicalBag()

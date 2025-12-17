@@ -89,7 +89,7 @@ function checkInjuries(data)
                                             dataToSend.targetServerId = data.target
                                             dataToSend.injury = true
                                             dataToSend.bone = v.bone
-                                            TriggerServerEvent("ars_ambulancejob:healPlayer", dataToSend)
+                                            TriggerServerEvent("F4R3-ambulancejob:healPlayer", dataToSend)
 
                                             utils.addRemoveItem("add", "money", (100 * (v.value / 10)))
 
