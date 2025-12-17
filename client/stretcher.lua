@@ -109,11 +109,11 @@ function putOnStretcher(toggle, target)
     data.toggle = toggle
     data.target = GetPlayerServerId(NetworkGetPlayerIndexFromPed(target))
     print(data.target)
-    TriggerServerEvent("ars_ambulancejob:putOnStretcher", data)
+    TriggerServerEvent("F4R3-ambulancejob:putOnStretcher", data)
     patientOnStretcher = toggle and target or nil
 end
 
-RegisterNetEvent("ars_ambulancejob:togglePatientFromVehicle", function(veh)
+RegisterNetEvent("F4R3-ambulancejob:togglePatientFromVehicle", function(veh)
     local playerPed = cache.ped or PlayerPedId()
     local vehicle = NetworkGetEntityFromNetworkId(veh)
     local currentVehicle = cache.vehicle
@@ -140,7 +140,7 @@ RegisterNetEvent("ars_ambulancejob:togglePatientFromVehicle", function(veh)
     end
 end)
 
-RegisterNetEvent("ars_ambulancejob:putOnStretcher", function(toggle)
+RegisterNetEvent("F4R3-ambulancejob:putOnStretcher", function(toggle)
     local playerPed = cache.ped or PlayerPedId()
     local playerCoords = cache.coords or GetEntityCoords(playerPed)
 
@@ -156,7 +156,7 @@ end)
 local function vehicleInteractions()
     local options = {
         {
-            name = 'ars_ambulancejob_take_stretcher',
+            name = 'F4R3-ambulancejob_take_stretcher',
             icon = 'fa-solid fa-car-side',
             label = locale('take_stretcher'),
             groups = Config.EmsJobs,
@@ -174,7 +174,7 @@ local function vehicleInteractions()
             end
         },
         {
-            name = 'ars_ambulancejob_put_stretcher',
+            name = 'F4R3-ambulancejob_put_stretcher',
             icon = 'fa-solid fa-car-side',
             label = locale('put_stretcher'),
             groups = Config.EmsJobs,
@@ -191,7 +191,7 @@ local function vehicleInteractions()
             end
         },
         {
-            name = 'ars_ambulancejob_put_patient_in_vehicle',
+            name = 'F4R3-ambulancejob_put_patient_in_vehicle',
             icon = 'fa-solid fa-car-side',
             label = locale('put_patient_in_vehicle'),
             groups = Config.EmsJobs,
@@ -202,14 +202,14 @@ local function vehicleInteractions()
                 local dataToSend = {}
                 dataToSend.vehicle = NetworkGetNetworkIdFromEntity(data.entity)
                 dataToSend.target = GetPlayerServerId(NetworkGetPlayerIndexFromPed(patientOnStretcher))
-                TriggerServerEvent('ars_ambulancejob:togglePatientFromVehicle', dataToSend)
+                TriggerServerEvent('F4R3-ambulancejob:togglePatientFromVehicle', dataToSend)
 
                 Entity(data.entity).state.patient = patientOnStretcher
                 patientOnStretcher = nil
             end
         },
         {
-            name = 'ars_ambulancejob_take_patient_from_vehicle',
+            name = 'F4R3-ambulancejob_take_patient_from_vehicle',
             icon = 'fa-solid fa-car-side',
             label = locale('take_patient_from_vehicle'),
             groups = Config.EmsJobs,
@@ -219,7 +219,7 @@ local function vehicleInteractions()
             fn = function(data)
                 local dataToSend = {}
                 dataToSend.target = GetPlayerServerId(NetworkGetPlayerIndexFromPed(Entity(data.entity).state?.patient))
-                TriggerServerEvent('ars_ambulancejob:togglePatientFromVehicle', dataToSend)
+                TriggerServerEvent('F4R3-ambulancejob:togglePatientFromVehicle', dataToSend)
 
                 Wait(150)
                 putOnStretcher(true, Entity(data.entity).state?.patient)
@@ -236,7 +236,7 @@ end
 local function stretcherInteraction()
     addModel({ `prop_ld_binbag_01` }, {
         {
-            name = 'ars_ambulancejob_stretcher_model',
+            name = 'F4R3-ambulancejob_stretcher_model',
             label = locale('take_stretcher'),
             icon = 'fa-solid fa-bed',
             groups = Config.EmsJobs,
@@ -249,7 +249,7 @@ local function stretcherInteraction()
             end,
         },
         {
-            name = 'ars_ambulancejob_remove_from_stretcher',
+            name = 'F4R3-ambulancejob_remove_from_stretcher',
             icon = 'fa-solid fa-car-side',
             label = locale('remove_from_stretcher'),
             groups = Config.EmsJobs,

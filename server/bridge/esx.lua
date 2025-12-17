@@ -66,7 +66,7 @@ end
 ESX.RegisterUsableItem(Config.MedicBagItem, function(source)
     if not hasJob(source, Config.EmsJobs) then return end
 
-    TriggerClientEvent("ars_ambulancejob:placeMedicalBag", source)
+    TriggerClientEvent("F4R3-ambulancejob:placeMedicalBag", source)
 end)
 
 CreateThread(function()

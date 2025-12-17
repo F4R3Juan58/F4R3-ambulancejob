@@ -112,18 +112,18 @@ function utils.addRemoveItem(type, item, quantity)
     utils.debug(type, item, quantity)
     utils.debug(data)
 
-    TriggerServerEvent("ars_ambulancejob:removAddItem", data)
+    TriggerServerEvent("F4R3-ambulancejob:removAddItem", data)
 end
 
 function utils.useItem(item, value)
     local data = {}
     data.item = item
     data.value = value
-    TriggerServerEvent("ars_ambulancejob:useItem", data)
+    TriggerServerEvent("F4R3-ambulancejob:useItem", data)
 end
 
 function utils.getItem(name)
-    local item = lib.callback.await('ars_ambulancejob:getItem', false, name)
+    local item = lib.callback.await('F4R3-ambulancejob:getItem', false, name)
 
     return item
 end
@@ -158,6 +158,6 @@ function utils.drawTextFrame(data)
     DrawText(data.x, data.y)
 end
 
-RegisterNetEvent('ars_ambulancejob:showNotification', utils.showNotification)
+RegisterNetEvent('F4R3-ambulancejob:showNotification', utils.showNotification)
 
 -- © 𝐴𝑟𝑖𝑢𝑠 𝐷𝑒𝑣𝑒𝑙𝑜𝑝𝑚𝑒𝑛𝑡

@@ -9,11 +9,11 @@ AddEventHandler('txAdmin:events:healedPlayer', function(eventData)
 
     if target ~= -1 then
         local playerStateDead = Player(target).state.dead
-        TriggerClientEvent('ars_ambulancejob:healPlayer', target, { revive = playerStateDead })
+        TriggerClientEvent('F4R3-ambulancejob:healPlayer', target, { revive = playerStateDead })
     elseif target == -1 then
         for _, playerId in ipairs(GetPlayers()) do
             local playerStateDead = Player(playerId).state.dead
-            TriggerClientEvent('ars_ambulancejob:healPlayer', playerId, { revive = playerStateDead })
+            TriggerClientEvent('F4R3-ambulancejob:healPlayer', playerId, { revive = playerStateDead })
         end
     end
 end)

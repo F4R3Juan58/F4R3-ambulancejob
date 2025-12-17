@@ -15,13 +15,13 @@ lib.addCommand(Config.ReviveCommand, {
     local data = {}
     data.revive = true
 
-    TriggerClientEvent('ars_ambulancejob:healPlayer', args.target, data)
+    TriggerClientEvent('F4R3-ambulancejob:healPlayer', args.target, data)
 
 
     if source > 0 then
-        TriggerClientEvent("ars_ambulancejob:showNotification", source, (locale("revived_player")):format(args.target))
+        TriggerClientEvent("F4R3-ambulancejob:showNotification", source, (locale("revived_player")):format(args.target))
     else
-        print("^4ars_ambulancejob > ^0", (locale("revived_player")):format(args.target))
+        print("^4F4R3-ambulancejob > ^0", (locale("revived_player")):format(args.target))
     end
 end)
 
@@ -38,7 +38,7 @@ lib.addCommand(Config.ReviveAreaCommand, {
     },
     restricted = Config.AdminGroup
 }, function(source, args, raw)
-    if source <= 0 then return print("^4ars_ambulancejob > ^0", "You cant run this command from console") end
+    if source <= 0 then return print("^4F4R3-ambulancejob > ^0", "You cant run this command from console") end
 
     local players = GetPlayers()
 
@@ -52,10 +52,10 @@ lib.addCommand(Config.ReviveAreaCommand, {
         local dist   = #(playerCoords - coords)
 
         if dist <= args.radius then
-            TriggerClientEvent('ars_ambulancejob:healPlayer', player, { revive = true })
+            TriggerClientEvent('F4R3-ambulancejob:healPlayer', player, { revive = true })
         end
     end
-    TriggerClientEvent("ars_ambulancejob:showNotification", source, (locale("revived_area")):format(args.radius))
+    TriggerClientEvent("F4R3-ambulancejob:showNotification", source, (locale("revived_area")):format(args.radius))
 end)
 
 
@@ -75,12 +75,12 @@ lib.addCommand(Config.HealCommand, {
 
     local data = {}
     data.heal = true
-    TriggerClientEvent('ars_ambulancejob:healPlayer', args.target, data)
+    TriggerClientEvent('F4R3-ambulancejob:healPlayer', args.target, data)
 
     if source > 0 then
-        TriggerClientEvent("ars_ambulancejob:showNotification", source, (locale("healed_player")):format(args.target))
+        TriggerClientEvent("F4R3-ambulancejob:showNotification", source, (locale("healed_player")):format(args.target))
     else
-        print("^4ars_ambulancejob > ^0", (locale("healed_player")):format(args.target))
+        print("^4F4R3-ambulancejob > ^0", (locale("healed_player")):format(args.target))
     end
 end)
 
@@ -96,7 +96,7 @@ lib.addCommand(Config.HealAreaCommand, {
     },
     restricted = Config.AdminGroup
 }, function(source, args, raw)
-    if source <= 0 then return print("^4ars_ambulancejob > ^0", "You cant run this command from console") end
+    if source <= 0 then return print("^4F4R3-ambulancejob > ^0", "You cant run this command from console") end
 
     local players = GetPlayers()
 
@@ -109,10 +109,10 @@ lib.addCommand(Config.HealAreaCommand, {
         local coords = GetEntityCoords(ped)
         local dist   = #(coords - playerCoords)
         if dist <= args.radius then
-            TriggerClientEvent('ars_ambulancejob:healPlayer', player, { heal = true })
+            TriggerClientEvent('F4R3-ambulancejob:healPlayer', player, { heal = true })
         end
     end
-    TriggerClientEvent("ars_ambulancejob:showNotification", source, (locale("healed_area")):format(args.radius))
+    TriggerClientEvent("F4R3-ambulancejob:showNotification", source, (locale("healed_area")):format(args.radius))
 end)
 
 lib.addCommand(Config.ReviveAllCommand, {
@@ -123,12 +123,12 @@ lib.addCommand(Config.ReviveAllCommand, {
 
     for i = 1, #players do
         local player = players[i]
-        TriggerClientEvent('ars_ambulancejob:healPlayer', player, { revive = true })
+        TriggerClientEvent('F4R3-ambulancejob:healPlayer', player, { revive = true })
     end
 
     if source > 0 then
-        TriggerClientEvent("ars_ambulancejob:showNotification", source, locale("revived_all"))
+        TriggerClientEvent("F4R3-ambulancejob:showNotification", source, locale("revived_all"))
     else
-        print("^4ars_ambulancejob > ^0", locale("revived_all"))
+        print("^4F4R3-ambulancejob > ^0", locale("revived_all"))
     end
 end)

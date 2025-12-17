@@ -62,5 +62,5 @@ end
 QBCore.Functions.CreateUseableItem(Config.MedicBagItem, function(source, item)
     if not hasJob(source, Config.EmsJobs) then return end
 
-    TriggerClientEvent("ars_ambulancejob:placeMedicalBag", source)
+    TriggerClientEvent("F4R3-ambulancejob:placeMedicalBag", source)
 end)
