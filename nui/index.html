@@ -21,6 +21,13 @@
                 <span id="status-pill" class="state-pill stable">Estable</span>
                 <span id="shock-pill" class="state-pill info">Normal</span>
             </div>
+            <div class="patient-meta">
+                <div>
+                    <p class="label">Paciente activo</p>
+                    <p id="patient-name" class="value">Propietario</p>
+                </div>
+                <p id="patient-note" class="muted-text">Monitoreando tus signos vitales.</p>
+            </div>
             <div class="stat-grid">
                 <div class="stat-card">
                     <p class="label">Estado</p>
@@ -60,13 +67,6 @@
                 <button id="analyze" class="ghost">Analizar paciente cercano</button>
             </div>
             <div id="interactions" class="chips"></div>
-            <div id="analysis-card" class="analysis-card muted">
-                <div class="analysis-row">
-                    <span id="analysis-state" class="state-pill muted">Sin análisis</span>
-                    <span id="analysis-name" class="muted-text">Esperando paciente</span>
-                </div>
-                <p id="analysis-meta" class="muted-text">Pulso -- bpm · 0%</p>
-            </div>
         </section>
 
         <section class="dual">
@@ -76,6 +76,13 @@
                         <p class="eyebrow">Rutas de traslado</p>
                         <h4>Puntos de evacuación</h4>
                     </div>
+                </div>
+                <div class="map-card">
+                    <div class="map-header">
+                        <span class="label">Mapa de evacuación</span>
+                        <span class="muted-text">Ruta de traslado más cercana</span>
+                    </div>
+                    <div id="evac-map" class="evac-map"></div>
                 </div>
                 <ul id="routes" class="card-list"></ul>
             </div>

@@ -110,6 +110,17 @@ section {
     gap: 10px;
 }
 
+.patient-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px;
+    background: #f1f5f9;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
 .stat-card {
     background: #f8fbff;
     border: 1px solid var(--border);
@@ -198,6 +209,64 @@ section {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
+}
+
+.map-card {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.map-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.evac-map {
+    position: relative;
+    height: 160px;
+    border-radius: 10px;
+    background: radial-gradient(circle at 20% 20%, #e0f2fe, #e5e7eb 45%),
+        radial-gradient(circle at 80% 60%, #fef3c7, #e5e7eb 40%);
+    border: 1px dashed var(--border);
+    overflow: hidden;
+}
+
+.map-marker {
+    position: absolute;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(-50%, -50%);
+    color: var(--text);
+    font-weight: 700;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
+.map-marker span {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 6px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+}
+
+.map-marker.origin {
+    background: #ecfdf3;
+    border: 1px solid #bbf7d0;
+}
+
+.map-marker.destination {
+    background: #e0f2fe;
+    border: 1px solid #bae6fd;
 }
 
 footer {
