@@ -10,6 +10,8 @@ const patientName = document.getElementById('patient-name');
 const patientNote = document.getElementById('patient-note');
 const injuries = document.getElementById('injuries');
 const interactions = document.getElementById('interactions');
+const toolGrid = document.getElementById('tool-grid');
+const toolHint = document.getElementById('tool-hint');
 const routes = document.getElementById('routes');
 const points = document.getElementById('points');
 const evacMap = document.getElementById('evac-map');
@@ -17,16 +19,59 @@ const rank = document.getElementById('rank');
 const closeButton = document.getElementById('close');
 const toast = document.getElementById('shock-toast');
 const analyzeButton = document.getElementById('analyze');
+const minigame = document.getElementById('minigame');
+const minigameTitle = document.getElementById('minigame-title');
+const minigameDescription = document.getElementById('minigame-description');
+const minigameResult = document.getElementById('minigame-result');
+const minigameStage = document.querySelector('.minigame-stage');
+const minigameCursor = document.querySelector('.minigame-stage .cursor');
+const minigameTarget = document.querySelector('.minigame-stage .target');
+const minigameAction = document.getElementById('minigame-action');
+const minigameClose = document.getElementById('minigame-close');
 
 const MAX_HEALTH = 200;
 const toneClasses = ['stable', 'moderate', 'critical', 'info', 'muted'];
 let activePatientMode = 'self';
 let lastSelfSnapshot = null;
+let cursorInterval = null;
+let currentTool = null;
+let cursorDirection = 1;
+let cursorPosition = 0;
+
+const toolCopy = {
+    bandage: {
+        label: 'Vendas',
+        description: 'Detén sangrados leves manteniendo el pulso estable.',
+    },
+    defibrillator: {
+        label: 'Desfibrilador',
+        description: 'Solo disponible si el paciente está inconsciente.',
+    },
+    burncream: {
+        label: 'Crema para quemaduras',
+        description: 'Calma y evita daños adicionales de quemaduras.',
+    },
+    suturekit: {
+        label: 'Kit de suturas',
+        description: 'Cierra heridas profundas y frena hemorragias.',
+    },
+    tweezers: {
+        label: 'Pinzas',
+        description: 'Extrae fragmentos incrustados para reducir el daño.',
+    },
+    icepack: {
+        label: 'Compresa fría',
+        description: 'Baja la inflamación y mejora la circulación.',
+    },
+};
 
 function toggleHud(show) {
     hud.classList.toggle('hidden', !show);
     body.classList.toggle('hidden', !show);
-    
+    if (!show) {
+        hideMinigame();
+    }
+
 }
 
 function applyTone(element, tone, label) {
@@ -85,21 +130,70 @@ function setPatientIdentity(name, note) {
     patientNote.textContent = note || '';
 }
 
-function setInteractions(list) {
+function setInteractions(payload) {
+    const badges = Array.isArray(payload) ? payload : payload?.badges || [];
+    const tools = Array.isArray(payload) ? [] : payload?.tools || [];
+
     interactions.innerHTML = '';
-    if (!list || list.length === 0) {
+    toolGrid.innerHTML = '';
+
+    if (badges.length === 0) {
         const span = document.createElement('span');
         span.className = 'muted-text';
-        span.textContent = 'Sin herramientas disponibles';
+        span.textContent = 'Sin habilidades adicionales';
         interactions.appendChild(span);
+    } else {
+        badges.forEach((label) => {
+            const div = document.createElement('div');
+            div.className = 'chip';
+            div.textContent = label;
+            interactions.appendChild(div);
+        });
+    }
+
+    if (toolHint) {
+        toolHint.textContent = tools.length === 0
+            ? 'No tienes kits médicos disponibles.'
+            : 'Selecciona una herramienta para iniciar su minijuego.';
+    }
+
+    if (tools.length === 0) {
+        const empty = document.createElement('span');
+        empty.className = 'muted-text';
+        empty.textContent = 'No tienes kits médicos en tu inventario.';
+        toolGrid.appendChild(empty);
         return;
     }
 
-    list.forEach((label) => {
-        const div = document.createElement('div');
-        div.className = 'chip';
-        div.textContent = label;
-        interactions.appendChild(div);
+    tools.forEach((tool) => {
+        const card = document.createElement('div');
+        card.className = 'tool-card';
+
+        const title = document.createElement('h5');
+        title.textContent = tool.label || toolCopy[tool.id]?.label || tool.id;
+        card.appendChild(title);
+
+        const desc = document.createElement('p');
+        desc.className = 'muted-text';
+        desc.textContent = tool.description || toolCopy[tool.id]?.description || 'Sin descripción';
+        card.appendChild(desc);
+
+        const actions = document.createElement('div');
+        actions.className = 'tool-actions';
+
+        const badge = document.createElement('span');
+        badge.className = 'badge';
+        badge.textContent = 'Minijuego';
+        actions.appendChild(badge);
+
+        const btn = document.createElement('button');
+        btn.className = 'primary';
+        btn.textContent = 'Usar';
+        btn.addEventListener('click', () => startMinigame(tool.id));
+        actions.appendChild(btn);
+
+        card.appendChild(actions);
+        toolGrid.appendChild(card);
     });
 }
 
@@ -284,3 +378,83 @@ document.addEventListener('keydown', (event) => {
         closeHud();
     }
 });
+
+function stopCursor() {
+    if (cursorInterval) {
+        clearInterval(cursorInterval);
+        cursorInterval = null;
+    }
+}
+
+function hideMinigame() {
+    stopCursor();
+    minigame.classList.add('hidden');
+    minigameResult.textContent = '';
+    currentTool = null;
+}
+
+function startCursor(speed = 0.9) {
+    stopCursor();
+    cursorDirection = 1;
+    cursorPosition = 0;
+    cursorInterval = setInterval(() => {
+        cursorPosition += cursorDirection * speed;
+        if (cursorPosition >= 100 || cursorPosition <= 0) {
+            cursorDirection *= -1;
+            cursorPosition = Math.max(0, Math.min(100, cursorPosition));
+        }
+        minigameCursor.style.left = `${cursorPosition}%`;
+    }, 16);
+}
+
+function drawTargetWindow(difficulty = 18) {
+    const start = Math.random() * (100 - difficulty);
+    minigameTarget.style.left = `${start}%`;
+    minigameTarget.style.width = `${difficulty}%`;
+    return { start, end: start + difficulty };
+}
+
+let activeTarget = { start: 40, end: 58 };
+
+function startMinigame(toolId) {
+    if (!toolId) return;
+    currentTool = toolId;
+    minigame.classList.remove('hidden');
+    minigameTitle.textContent = toolCopy[toolId]?.label || 'Herramienta médica';
+    minigameDescription.textContent = toolCopy[toolId]?.description || 'Realiza la acción en el momento adecuado.';
+    minigameResult.textContent = 'Pulsa detener cuando el marcador esté en la zona verde.';
+    activeTarget = drawTargetWindow(toolId === 'defibrillator' ? 24 : 18);
+    startCursor(toolId === 'defibrillator' ? 0.7 : 1);
+}
+
+async function resolveMinigame() {
+    if (!currentTool) return;
+    stopCursor();
+    const success = cursorPosition >= activeTarget.start && cursorPosition <= activeTarget.end;
+    if (!success) {
+        minigameResult.textContent = 'Fallo. Intenta de nuevo estabilizando tus manos.';
+        startCursor();
+        return;
+    }
+
+    minigameResult.textContent = 'Aplicando tratamiento...';
+    try {
+        const response = await fetch(`https://${GetParentResourceName()}/applyTreatment`, {
+            method: 'POST',
+            body: JSON.stringify({ item: currentTool })
+        });
+        const result = await response.json();
+        minigameResult.textContent = result?.message || (result?.success ? 'Tratamiento aplicado.' : 'No se pudo aplicar.');
+        if (result?.success) {
+            setTimeout(hideMinigame, 1200);
+        } else {
+            startCursor();
+        }
+    } catch (error) {
+        minigameResult.textContent = 'No se pudo comunicar con el panel médico.';
+        startCursor();
+    }
+}
+
+minigameAction.addEventListener('click', resolveMinigame);
+minigameClose.addEventListener('click', hideMinigame);
