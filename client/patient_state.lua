@@ -175,6 +175,8 @@ RegisterCommand('medhud', function()
     QBCore.Functions.Notify(hudEnabled and 'HUD médico activo' or 'HUD médico oculto', hudEnabled and 'success' or 'primary')
 end, false)
 
+RegisterKeyMapping('medhud', 'Mostrar panel médico', 'keyboard', 'F7')
+
 exports('GetMedicalState', function()
     lastSnapshot = snapshotState()
     return lastSnapshot
