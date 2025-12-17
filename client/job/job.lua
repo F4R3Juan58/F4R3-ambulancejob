@@ -26,13 +26,64 @@ local ClearPedBloodDamage          = ClearPedBloodDamage
 local ResurrectPed                 = ResurrectPed
 local SetEntityHealth              = SetEntityHealth
 
+local random = math.random
+
+local function generateNpcPatientProfile(target)
+    local namePool = {
+        "Alex Romero", "Sofia Delgado", "Mateo Navarro", "Lucia Castillo", "Diego Molina", "Valentina Rios",
+        "Carlos Benitez", "Camila Suarez", "Javier Ortega", "Isabella Cruz", "Pablo Herrera", "Maria Solano",
+    }
+    local bloodTypes = { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" }
+    local injuryCauses = { "beaten", "stabbed", "shot", "fire" }
+
+    local injuries = {}
+    local bodyParts = {}
+
+    for bone, data in pairs(Config.BodyParts) do
+        bodyParts[#bodyParts + 1] = { bone = bone, data = data }
+    end
+
+    local injuryCount = random(1, math.min(3, #bodyParts))
+
+    for i = 1, injuryCount do
+        local selected = bodyParts[random(#bodyParts)]
+        local severity = random(2, 6) * 10
+        local desc = selected.data.levels[tostring(severity)] or selected.data.levels["default"] or locale("patient_conscious")
+        local cause = injuryCauses[random(#injuryCauses)]
+
+        injuries[#injuries + 1] = {
+            bone = selected.data.id,
+            label = selected.data.label,
+            desc = desc,
+            value = severity,
+            cause = cause,
+        }
+    end
+
+    return {
+        identity = {
+            name = namePool[random(#namePool)],
+            age = random(20, 75),
+            bloodType = bloodTypes[random(#bloodTypes)],
+        },
+        status = { isDead = IsEntityDead(target) },
+        injuries = injuries,
+    }
+end
+
 
 local function checkPatient(target)
     local targetPlayer = NetworkGetPlayerIndexFromPed(target)
     local targetServerId = targetPlayer and targetPlayer ~= -1 and GetPlayerServerId(targetPlayer)
-    local data = targetServerId and lib.callback.await('F4R3-ambulancejob:getData', false, targetServerId)
+    local data
     local isPlayerTarget = targetServerId ~= nil
-    if isPlayerTarget and not data then return utils.showNotification("Could not fetch patient data") end
+
+    if isPlayerTarget then
+        data = lib.callback.await('F4R3-ambulancejob:getData', false, targetServerId)
+        if not data then return utils.showNotification("Could not fetch patient data") end
+    else
+        data = generateNpcPatientProfile(target)
+    end
     local isDead = data and data.status.isDead or IsEntityDead(target)
     local status = isDead and locale("patient_not_conscious") or locale("patient_conscious")
 
@@ -57,7 +108,20 @@ local function checkPatient(target)
         },
     }
 
-    if isPlayerTarget then
+    if data.identity then
+        options[#options + 1] = {
+            title = locale("check_patient_menu_title"),
+            icon = 'id-card',
+            readOnly = true,
+            metadata = {
+                { label = 'Nombre', value = data.identity.name },
+                { label = 'Edad', value = data.identity.age },
+                { label = 'Tipo de sangre', value = data.identity.bloodType },
+            },
+        }
+    end
+
+    if isPlayerTarget or (data.injuries and next(data.injuries)) then
         options[#options + 1] = {
             title = locale("check_injuries"),
             description = 'check if the patient has any fractures',
@@ -66,6 +130,8 @@ local function checkPatient(target)
                 local passData = {}
                 passData.target = targetServerId
                 passData.injuries = data.injuries
+                passData.isNpc = not isPlayerTarget
+                passData.ped = not isPlayerTarget and target or nil
 
                 checkInjuries(passData)
             end,
