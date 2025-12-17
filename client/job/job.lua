@@ -5,6 +5,8 @@ local GetEntityHeading             = GetEntityHeading
 local GetEntityForwardVector       = GetEntityForwardVector
 local GetGameTimer                 = GetGameTimer
 local GetEntityCoords              = GetEntityCoords
+local GetEntityMaxHealth           = GetEntityMaxHealth
+local IsEntityDead                 = IsEntityDead
 local GetStreetNameAtCoord         = GetStreetNameAtCoord
 local GetStreetNameFromHashKey     = GetStreetNameFromHashKey
 local TriggerServerEvent           = TriggerServerEvent
@@ -20,15 +22,73 @@ local SetEntityVisible             = SetEntityVisible
 local SetEntityInvincible          = SetEntityInvincible
 local TriggerEvent                 = TriggerEvent
 local SetCurrentPedWeapon          = SetCurrentPedWeapon
+local ClearPedBloodDamage          = ClearPedBloodDamage
+local ResurrectPed                 = ResurrectPed
+local SetEntityHealth              = SetEntityHealth
+local IsPedAPlayer                 = IsPedAPlayer
+
+local random = math.random
+
+local function generateNpcPatientProfile(target)
+    local namePool = {
+        "Alex Romero", "Sofia Delgado", "Mateo Navarro", "Lucia Castillo", "Diego Molina", "Valentina Rios",
+        "Carlos Benitez", "Camila Suarez", "Javier Ortega", "Isabella Cruz", "Pablo Herrera", "Maria Solano",
+    }
+    local bloodTypes = { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" }
+    local injuryCauses = { "beaten", "stabbed", "shot", "fire" }
+
+    local injuries = {}
+    local bodyParts = {}
+
+    for bone, data in pairs(Config.BodyParts) do
+        bodyParts[#bodyParts + 1] = { bone = bone, data = data }
+    end
+
+    local injuryCount = random(1, math.min(3, #bodyParts))
+
+    for i = 1, injuryCount do
+        local selected = bodyParts[random(#bodyParts)]
+        local severity = random(2, 6) * 10
+        local desc = selected.data.levels[tostring(severity)] or selected.data.levels["default"] or locale("patient_conscious")
+        local cause = injuryCauses[random(#injuryCauses)]
+
+        injuries[#injuries + 1] = {
+            bone = selected.data.id,
+            label = selected.data.label,
+            desc = desc,
+            value = severity,
+            cause = cause,
+        }
+    end
+
+    return {
+        identity = {
+            name = namePool[random(#namePool)],
+            age = random(20, 75),
+            bloodType = bloodTypes[random(#bloodTypes)],
+        },
+        status = { isDead = IsEntityDead(target) },
+        injuries = injuries,
+    }
+end
 
 
 local function checkPatient(target)
-    local targetServerId = GetPlayerServerId(NetworkGetPlayerIndexFromPed(target))
-    local data = lib.callback.await('F4R3-ambulancejob:getData', false, targetServerId)
-    local isDead = data.status.isDead
+    local targetPlayer = NetworkGetPlayerIndexFromPed(target)
+    local targetServerId = targetPlayer and targetPlayer ~= -1 and GetPlayerServerId(targetPlayer)
+    local isPlayerTarget = IsPedAPlayer(target) and targetServerId ~= nil
+    local data
+
+    if isPlayerTarget then
+        data = lib.callback.await('F4R3-ambulancejob:getData', false, targetServerId)
+        if not data then return utils.showNotification("Could not fetch patient data") end
+    else
+        data = generateNpcPatientProfile(target)
+    end
+    local isDead = data and data.status.isDead or IsEntityDead(target)
     local status = isDead and locale("patient_not_conscious") or locale("patient_conscious")
 
-    utils.debug(data)
+    utils.debug(data or "NPC target")
 
     lib.progressBar({
         duration = 3000,
@@ -47,8 +107,23 @@ local function checkPatient(target)
             iconColor = isDead and "#b5300b" or "#5b87b0",
             readOnly = true,
         },
+    }
 
-        {
+    if data.identity then
+        options[#options + 1] = {
+            title = locale("check_patient_menu_title"),
+            icon = 'id-card',
+            readOnly = true,
+            metadata = {
+                { label = 'Nombre', value = data.identity.name },
+                { label = 'Edad', value = data.identity.age },
+                { label = 'Tipo de sangre', value = data.identity.bloodType },
+            },
+        }
+    end
+
+    if isPlayerTarget or (data.injuries and next(data.injuries)) then
+        options[#options + 1] = {
             title = locale("check_injuries"),
             description = 'check if the patient has any fractures',
             icon = 'user-injured',
@@ -56,11 +131,13 @@ local function checkPatient(target)
                 local passData = {}
                 passData.target = targetServerId
                 passData.injuries = data.injuries
+                passData.isNpc = not isPlayerTarget
+                passData.ped = not isPlayerTarget and target or nil
 
                 checkInjuries(passData)
             end,
         }
-    }
+    end
 
     if isDead then
         options[#options + 1] = {
@@ -71,7 +148,6 @@ local function checkPatient(target)
             onSelect = function()
                 local count = exports.ox_inventory:Search('count', "defibrillator")
                 if count < 1 then return utils.showNotification(locale("not_enough_defibrillator")) end
-
 
                 local itemDurability = utils.getItem("defibrillator")?.metadata?.durability
 
@@ -91,15 +167,26 @@ local function checkPatient(target)
                 dataToSend.heading = playerHeading
                 dataToSend.location = playerLocation
                 dataToSend.coords = playerCoords
-                TriggerServerEvent("F4R3-ambulancejob:healPlayer", dataToSend)
+
+                if isPlayerTarget then
+                    TriggerServerEvent("F4R3-ambulancejob:healPlayer", dataToSend)
+                else
+                    ClearPedBloodDamage(target)
+                    ResurrectPed(target)
+                    SetEntityHealth(target, GetEntityMaxHealth(target))
+                    SetEntityCoords(target, playerCoords.x, playerCoords.y, playerCoords.z - 0.50, false, false, false, false)
+                    SetEntityHeading(target, playerHeading - 270.0)
+                end
             end,
         }
 
-        options[#options + 1] = {
-            title = WEAPONS[data.killedBy] and WEAPONS[data.killedBy][1] or "Not found",
-            readOnly = true,
-            icon = 'skull',
-        }
+        if isPlayerTarget then
+            options[#options + 1] = {
+                title = WEAPONS[data.killedBy] and WEAPONS[data.killedBy][1] or "Not found",
+                readOnly = true,
+                icon = 'skull',
+            }
+        end
     end
 
     lib.registerContext({
@@ -249,7 +336,7 @@ end
 exports("openDistressCalls", openDistressCalls)
 
 
-addGlobalPlayer({
+local playerOptions = {
     {
         name = 'check_suspect',
         icon = 'fas fa-magnifying-glass',
@@ -276,7 +363,10 @@ addGlobalPlayer({
             putOnStretcher(true, type(data) == "number" and data or data.entity)
         end
     },
-})
+}
+
+addGlobalPlayer(playerOptions)
+addGlobalPed(playerOptions)
 
 
 RegisterNetEvent("F4R3-ambulancejob:playHealAnim", function(data)
