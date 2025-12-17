@@ -85,23 +85,36 @@ function checkInjuries(data)
 
                                             })
                                         then
-                                            local dataToSend = {}
-                                            dataToSend.targetServerId = data.target
-                                            dataToSend.injury = true
-                                            dataToSend.bone = v.bone
-                                            TriggerServerEvent("F4R3-ambulancejob:healPlayer", dataToSend)
+                                            if data.isNpc and data.ped then
+                                                data.injuries[_] = nil
+                                                ClearPedBloodDamage(data.ped)
 
-                                            utils.addRemoveItem("add", "money", (100 * (v.value / 10)))
+                                                local currentHealth = GetEntityHealth(data.ped)
+                                                local maxHealth = GetEntityMaxHealth(data.ped)
+                                                local newHealth = math.min(maxHealth, currentHealth + math.floor(v.value / 2))
 
-                                            utils.showNotification(locale("injurie_treated"))
-                                            utils.debug("Injury treated " .. dataToSend.bone)
+                                                SetEntityHealth(data.ped, newHealth)
+                                                utils.showNotification(locale("injurie_treated"))
+                                                utils.debug("NPC injury treated " .. v.bone)
+                                            else
+                                                local dataToSend = {}
+                                                dataToSend.targetServerId = data.target
+                                                dataToSend.injury = true
+                                                dataToSend.bone = v.bone
+                                                TriggerServerEvent("F4R3-ambulancejob:healPlayer", dataToSend)
+
+                                                utils.addRemoveItem("add", "money", (100 * (v.value / 10)))
+
+                                                utils.showNotification(locale("injurie_treated"))
+                                                utils.debug("Injury treated " .. dataToSend.bone)
+                                            end
                                         else
                                             utils.showNotification(locale("operation_canceled"))
                                         end
                                     end
-                                end
+                                end,
 
-                            }
+                        }
                         }
                     })
 
