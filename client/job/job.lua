@@ -25,6 +25,7 @@ local SetCurrentPedWeapon          = SetCurrentPedWeapon
 local ClearPedBloodDamage          = ClearPedBloodDamage
 local ResurrectPed                 = ResurrectPed
 local SetEntityHealth              = SetEntityHealth
+local IsPedAPlayer                 = IsPedAPlayer
 
 local random = math.random
 
@@ -75,8 +76,8 @@ end
 local function checkPatient(target)
     local targetPlayer = NetworkGetPlayerIndexFromPed(target)
     local targetServerId = targetPlayer and targetPlayer ~= -1 and GetPlayerServerId(targetPlayer)
+    local isPlayerTarget = IsPedAPlayer(target) and targetServerId ~= nil
     local data
-    local isPlayerTarget = targetServerId ~= nil
 
     if isPlayerTarget then
         data = lib.callback.await('F4R3-ambulancejob:getData', false, targetServerId)
