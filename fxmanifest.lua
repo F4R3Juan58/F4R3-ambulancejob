@@ -8,6 +8,7 @@ game 'gta5'
 version '1.0.3'
 author 'F4R3'
 description 'Advanced ambulance job with intergrated death system'
+ui_page 'web/index.html'
 
 
 --#--
@@ -15,15 +16,17 @@ description 'Advanced ambulance job with intergrated death system'
 --#--
 
 shared_scripts {
-	'@ox_lib/init.lua',
-	'config.lua',
+        '@ox_lib/init.lua',
+        'config.lua',
 }
 
 client_scripts {
-	"client/modules/weapons.lua",
-	"client/modules/utils.lua",
+        "client/modules/weapons.lua",
+        "client/modules/utils.lua",
 
-	"client/main.lua",
+        "client/nui.lua",
+
+        "client/main.lua",
 
 	"client/bridge/esx.lua",
 	"client/bridge/qb.lua",
@@ -45,14 +48,17 @@ client_scripts {
 }
 
 server_scripts {
-	"@oxmysql/lib/MySQL.lua",
-	"server/bridge/esx.lua",
-	"server/bridge/qb.lua",
-	"server/main.lua",
-	"server/commands.lua",
-	"server/txadmin.lua",
+        "@oxmysql/lib/MySQL.lua",
+        "server/bridge/esx.lua",
+        "server/bridge/qb.lua",
+        "server/main.lua",
+        "server/commands.lua",
+        "server/txadmin.lua",
 }
 
 files {
-	'locales/*.json',
+        'web/index.html',
+        'web/styles.css',
+        'web/script.js',
+        'locales/*.json',
 }
