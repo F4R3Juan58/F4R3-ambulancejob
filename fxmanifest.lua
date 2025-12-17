@@ -1,40 +1,58 @@
+--#--
+--Fx info--
+--#--
 fx_version 'cerulean'
-game 'gta5'
+use_fxv2_oal 'yes'
 lua54 'yes'
-author 'Kakarot'
-description 'Player health, death, and wounding system with ems job'
-version '1.2.4'
+game 'gta5'
+version '1.0.3'
+author 'Arius Scripts'
+description 'Advanced ambulance job with intergrated death system'
 
-ui_page 'nui/index.html'
+
+--#--
+--Manifest--
+--#--
 
 shared_scripts {
-        '@qb-core/shared/locale.lua',
-        'locales/en.lua',
-        'locales/*.lua',
-	'config.lua'
+	'@ox_lib/init.lua',
+	'config.lua',
 }
 
 client_scripts {
-	'client/main.lua',
-        'client/wounding.lua',
-        'client/laststand.lua',
-        'client/job.lua',
-        'client/dead.lua',
-        'client/patient_state.lua',
-        'client/nui.lua',
-        'client/medical_actions.lua',
-        '@PolyZone/client.lua',
-        '@PolyZone/BoxZone.lua',
-        '@PolyZone/ComboZone.lua'
+	"client/modules/weapons.lua",
+	"client/modules/utils.lua",
+
+	"client/main.lua",
+
+	"client/bridge/esx.lua",
+	"client/bridge/qb.lua",
+	"client/bridge/target.lua",
+
+	"client/injuries.lua",
+	"client/death.lua",
+	"client/stretcher.lua",
+	"client/paramedic.lua",
+
+	"client/job/job.lua",
+	"client/job/garage.lua",
+	"client/job/medical_bag.lua",
+	"client/job/stashes.lua",
+	"client/job/shops.lua",
+	"client/job/clothing.lua",
+	"client/job/bossmenu.lua",
+	"client/modules/coords_debug.lua",
 }
 
 server_scripts {
-        '@oxmysql/lib/MySQL.lua',
-        'server/main.lua'
+	"@oxmysql/lib/MySQL.lua",
+	"server/bridge/esx.lua",
+	"server/bridge/qb.lua",
+	"server/main.lua",
+	"server/commands.lua",
+	"server/txadmin.lua",
 }
 
 files {
-        'nui/index.html',
-        'nui/styles.css',
-        'nui/app.js'
+	'locales/*.json',
 }

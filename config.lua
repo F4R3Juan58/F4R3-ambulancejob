@@ -1,526 +1,289 @@
-Config = {}
-Config.UseTarget = GetConvar('UseTarget', 'false') == 'true' -- Use qb-target interactions (don't change this, go to your server.cfg and add setr UseTarget true)
-Config.MinimalDoctors = 2                                    -- How many players with the ambulance job to prevent the hospital check-in system from being used
-Config.DocCooldown = 1                                       -- Cooldown between doctor calls allowed, in minutes
-Config.WipeInventoryOnRespawn = true                         -- Enable or disable removing all the players items when they respawn at the hospital
-Config.RespawnAtNearestHospital = true                       -- Enable or disable respawning at the closest hospital
-Config.Helicopter = 'polmav'                                 -- Helicopter model that players with the ambulance job can use
-Config.BillCost = 2000                                       -- Price that players are charged for using the hospital check-in system
-Config.DeathTime = 300                                       -- How long the timer is for players to bleed out completely and respawn at the hospital
-Config.ReviveInterval = 360                                  -- How long the timer is for players to revive a player in laststand
-Config.MinimumRevive = 300                                   -- How long the timer is for players to revive a player in laststand
-Config.PainkillerInterval = 60                               -- Set the length of time painkillers last (per one)
-Config.HealthDamage = 5                                      -- Minumum damage done to health before checking for injuries
-Config.ArmorDamage = 5                                       -- Minumum damage done to armor before checking for injuries
-Config.ForceInjury = 35                                      -- Maximum amount of damage a player can take before limb damage & effects are forced to occur
-Config.AlwaysBleedChance = 70                                -- Set the chance out of 100 that if a player is hit with a weapon, that also has a random chance, it will cause bleeding
-Config.MessageTimer = 12                                     -- How long it will take to display limb/bleed message
-Config.AIHealTimer = 20                                      -- How long it will take to be healed after checking in, in seconds
-Config.BleedTickRate = 30                                    -- How much time, in seconds, between bleed ticks
-Config.BleedMovementTick = 10                                -- How many seconds is taken away from the bleed tick rate if the player is walking, jogging, or sprinting
-Config.BleedMovementAdvance = 3                              -- How much time moving while bleeding adds
-Config.BleedTickDamage = 8                                   -- The base damage that is multiplied by bleed level everytime a bleed tick occurs
-Config.FadeOutTimer = 2                                      -- How many bleed ticks occur before fadeout happens
-Config.BlackoutTimer = 10                                    -- How many bleed ticks occur before blacking out
-Config.AdvanceBleedTimer = 10                                -- How many bleed ticks occur before bleed level increases
-Config.HeadInjuryTimer = 30                                  -- How much time, in seconds, do head injury effects chance occur
-Config.ArmInjuryTimer = 30                                   -- How much time, in seconds, do arm injury effects chance occur
-Config.LegInjuryTimer = 15                                   -- How much time, in seconds, do leg injury effects chance occur
-Config.HeadInjuryChance = 25                                 -- The chance, in percent, that head injury side-effects get applied
-Config.LegInjuryChance = {                                   -- The chance, in percent, that leg injury side-effects get applied
-    Running = 50,
-    Walking = 15
-}
-Config.MajorArmoredBleedChance = 45 -- The chance, in percent, that a player will get a bleed effect when taking heavy damage while wearing armor
-Config.MaxInjuryChanceMulti = 3     -- How many times the HealthDamage value above can divide into damage taken before damage is forced to be applied
-Config.DamageMinorToMajor = 35      -- How much damage would have to be applied for a minor weapon to be considered a major damage event. Put this at 100 if you want to disable it
-Config.AlertShowInfo = 2            -- How many injuries a player must have before being alerted about them
+lib.locale()
 
-Config.Locations = {                -- Edit the various interaction points for players or create new ones
-    ['checking'] = {
-        vector3(308.19, -595.35, 43.29),
-        vector3(-254.54, 6331.78, 32.43), -- paleto
-    },
-    ['duty'] = {
-        vector3(311.18, -599.25, 43.29),
-        vector3(-254.88, 6324.5, 32.58), -- paleto
-    },
-    ['vehicle'] = {
-        vector4(294.578, -574.761, 43.179, 35.79),
-        vector4(-234.28, 6329.16, 32.15, 222.5), -- paleto
-    },
-    ['helicopter'] = {
-        vector4(351.58, -587.45, 74.16, 160.5),
-        vector4(-475.43, 5988.353, 31.716, 31.34), -- paleto
-    },
-    ['roof'] = {
-        vector4(338.5, -583.85, 74.16, 245.5),
-    },
-    ['main'] = {
-        vector3(298.74, -599.33, 43.29),
-    },
-    ['stash'] = {
-        vector3(309.78, -596.6, 43.29),
-    },
-    ['beds'] = {
-        { coords = vector4(353.1, -584.6, 43.11, 152.08),    taken = false, model = 1631638868 },
-        { coords = vector4(356.79, -585.86, 43.11, 152.08),  taken = false, model = 1631638868 },
-        { coords = vector4(354.12, -593.12, 43.1, 336.32),   taken = false, model = 2117668672 },
-        { coords = vector4(350.79, -591.8, 43.1, 336.32),    taken = false, model = 2117668672 },
-        { coords = vector4(346.99, -590.48, 43.1, 336.32),   taken = false, model = 2117668672 },
-        { coords = vector4(360.32, -587.19, 43.02, 152.08),  taken = false, model = -1091386327 },
-        { coords = vector4(349.82, -583.33, 43.02, 152.08),  taken = false, model = -1091386327 },
-        { coords = vector4(326.98, -576.17, 43.02, 152.08),  taken = false, model = -1091386327 },
-        --- paleto
-        { coords = vector4(-252.43, 6312.25, 32.34, 313.48), taken = false, model = 2117668672 },
-        { coords = vector4(-247.04, 6317.95, 32.34, 134.64), taken = false, model = 2117668672 },
-        { coords = vector4(-255.98, 6315.67, 32.34, 313.91), taken = false, model = 2117668672 },
-    },
-    ['jailbeds'] = {
-        { coords = vector4(1761.96, 2597.74, 45.66, 270.14), taken = false, model = 2117668672 },
-        { coords = vector4(1761.96, 2591.51, 45.66, 269.8),  taken = false, model = 2117668672 },
-        { coords = vector4(1771.8, 2598.02, 45.66, 89.05),   taken = false, model = 2117668672 },
-        { coords = vector4(1771.85, 2591.85, 45.66, 91.51),  taken = false, model = 2117668672 },
-    },
-    ['hospital'] = {
-        {
-            ['name'] = Lang:t('info.pb_hospital'),
-            ['location'] = vector3(308.36, -595.25, 43.28),
-            ['beds'] = {
-                { coords = vector4(353.1, -584.6, 43.11, 152.08),   taken = false, model = 1631638868 },
-                { coords = vector4(356.79, -585.86, 43.11, 152.08), taken = false, model = 1631638868 },
-                { coords = vector4(354.12, -593.12, 43.1, 336.32),  taken = false, model = 2117668672 },
-                { coords = vector4(350.79, -591.8, 43.1, 336.32),   taken = false, model = 2117668672 },
-                { coords = vector4(346.99, -590.48, 43.1, 336.32),  taken = false, model = 2117668672 },
-                { coords = vector4(360.32, -587.19, 43.02, 152.08), taken = false, model = -1091386327 },
-                { coords = vector4(349.82, -583.33, 43.02, 152.08), taken = false, model = -1091386327 },
-                { coords = vector4(326.98, -576.17, 43.02, 152.08), taken = false, model = -1091386327 },
-            },
-        },
-        {
-            ['name'] = Lang:t('info.paleto_hospital'),
-            ['location'] = vector3(-254.54, 6331.78, 32.43),
-            ['beds'] = {
-                { coords = vector4(-252.43, 6312.25, 32.34, 313.48), taken = false, model = 2117668672 },
-                { coords = vector4(-247.04, 6317.95, 32.34, 134.64), taken = false, model = 2117668672 },
-                { coords = vector4(-255.98, 6315.67, 32.34, 313.91), taken = false, model = 2117668672 },
-            },
-        },
-    },
-    ['stations'] = {
-        { label = Lang:t('info.pb_hospital'), coords = vector3(304.27, -600.33, 43.28) }
-    }
+Config                         = {}
+
+Config.Debug                   = false
+
+Config.ClothingScript          = 'illenium-appearance' -- 'illenium-appearance', 'fivem-appearance' ,'core' or false -- to disable
+Config.EmsJobs                 = { "ambulance", "ems" }
+Config.RespawnTime             = 0                     -- in minutes
+Config.UseInterDistressSystem  = true
+Config.WaitTimeForNewCall      = 5                     -- minutes
+
+Config.ReviveCommand           = "revive"
+Config.ReviveAreaCommand       = "revivearea"
+Config.HealCommand             = "heal"
+Config.HealAreaCommand         = "healarea"
+Config.ReviveAllCommand        = "reviveall"
+
+Config.AdminGroup              = "group.admin"
+
+Config.MedicBagProp            = "xm_prop_x17_bag_med_01a"
+Config.MedicBagItem            = "medicalbag"
+
+Config.HelpCommand             = "911"
+Config.RemoveItemsOnRespawn    = true
+
+Config.BaseInjuryReward        = 150 -- changes if the injury value is higher then 1
+Config.ReviveReward            = 700
+
+Config.ParamedicTreatmentPrice = 4000
+Config.AllowAlways             = true        -- false if you want it to work only when there are only medics online
+
+Config.AmbulanceStretchers     = 2           -- how many stretchers should an ambunalce have
+Config.ConsumeItemPerUse       = 10          -- every time you use an item it gets used by 10%
+
+Config.TimeToWaitForCommand    = 2           -- when player dies he needs to wait 2 minutes to do the ambulance command
+Config.NpcReviveCommand        = "ambulance" -- this will work only when there are no medics online
+
+Config.UsePedToDepositVehicle  = false       -- if false the vehicle will instantly despawns
+Config.ExtraEffects            = true        -- false >> disables the screen shake and the black and white screen
+
+Config.EmsVehicles             = {           -- vehicles that have access to the props (cones and ecc..)
+	'ambulance',
+	'ambulance2',
 }
 
-Config.AuthorizedVehicles = { -- Grade is key, don't add same vehicle in multiple grades. Higher rank can see lower
-    [0] = {
-        ['ambulance'] = 'Ambulance'
-    }
+Config.DeathAnimations         = {
+	["car"] = {
+		dict = "veh@low@front_ps@idle_duck",
+		clip = "sit"
+	},
+	["normal"] = {
+		dict = "dead",
+		clip = "dead_a"
+	},
+	["revive"] = {
+		dict = "get_up@directional@movement@from_knees@action",
+		clip = "getup_r_0"
+	}
 }
 
-Config.WeaponClasses = { -- Define gta weapon classe numbers
-    ['SMALL_CALIBER'] = 1,
-    ['MEDIUM_CALIBER'] = 2,
-    ['HIGH_CALIBER'] = 3,
-    ['SHOTGUN'] = 4,
-    ['CUTTING'] = 5,
-    ['LIGHT_IMPACT'] = 6,
-    ['HEAVY_IMPACT'] = 7,
-    ['EXPLOSIVE'] = 8,
-    ['FIRE'] = 9,
-    ['SUFFOCATING'] = 10,
-    ['OTHER'] = 11,
-    ['WILDLIFE'] = 12,
-    ['NOTHING'] = 13
+
+Config.Hospitals = {
+	["phillbox"] = {
+		paramedic = {
+			model = "s_m_m_scientist_01",
+			pos = vector4(312.0927, -596.1016, 42.2918, 338.7213),
+		},
+		bossmenu = {
+			pos = vector3(284.84, -615.6, 44.24),
+			min_grade = 2
+		},
+		zone = {
+			pos = vec3(299.0, -585.28, 43.28),
+			size = vec3(200.0, 200.0, 200.0),
+		},
+		blip = {
+			enable = true,
+			name = 'Phillbox Hospital',
+			type = 61,
+			scale = 1.0,
+			color = 2,
+			pos = vector3(308.96, -591.52, 43.28),
+		},
+		respawn = {
+			{
+				bedPoint = vector4(349.76, -583.44, 43.0, 150.04),
+				spawnPoint = vector4(348.84, -583.36, 42.32, 68.24)
+			},
+			-- {
+			-- 	bedPoint = vector4(346.96, -590.64, 44.12, 338.0),
+			-- 	spawnPoint = vector4(348.84, -583.36, 42.32, 68.24)
+			-- },
+
+		},
+		stash = {
+			['ems_stash_1'] = {
+				slots = 50,
+				weight = 50, -- kg
+				min_grade = 0,
+				label = 'Ems stash',
+				shared = true, -- false if you want to make everyone has a personal stash
+				pos = vector3(309.96, -599.2, 43.28)
+			}
+		},
+		pharmacy = {
+			["ems_shop_1"] = {
+				job = true,
+				label = "Pharmacy",
+				grade = 0, -- works only if job true
+				pos = vector3(315.5516, -598.6013, 43.2918),
+				blip = {
+					enable = false,
+					name = 'Pharmacy',
+					type = 61,
+					scale = 0.7,
+					color = 2,
+					pos = vector3(315.5516, -598.6013, 43.2918),
+				},
+				items = {
+					{ name = 'medicalbag',    price = 10 },
+					{ name = 'bandage',       price = 10 },
+					{ name = 'defibrillator', price = 10 },
+					{ name = 'tweezers',      price = 10 },
+					{ name = 'burncream',     price = 10 },
+					{ name = 'suturekit',     price = 10 },
+					{ name = 'icepack',       price = 10 },
+				}
+			},
+			["ems_shop_2"] = {
+				job = false,
+				label = "Pharmacy",
+				grade = 0, -- works only if job true
+				pos = vector3(303.84, -597.6, 43.28),
+				blip = {
+					enable = true,
+					name = 'Pharmacy',
+					type = 61,
+					scale = 0.7,
+					color = 2,
+					pos = vector3(303.84, -597.6, 43.28),
+				},
+				items = {
+					{ name = 'bandage', price = 10 },
+				}
+			},
+		},
+		garage = {
+			['ems_garage_1'] = {
+				pedPos = vector4(291.2237, -614.9087, 42.4234, 332.9413),
+				model = 'mp_m_weapexp_01',
+				spawn = vector4(294.28, -608.32, 43.32, 69.6),
+				deposit = vector3(294.28, -608.32, 43.32),
+				driverSpawnCoords = vector3(297.56, -600.52, 43.32),
+
+				vehicles = {
+					{
+						label = 'Ambulance',
+						spawn_code = 'ambulance',
+						min_grade = 3,
+						modifications = {} -- es. {color1 = {255, 12, 25}}
+					},
+				}
+			}
+		},
+		clothes = {
+			enable = true,
+			pos = vector4(300.7454, -597.4542, 42.2918, 298.0781),
+			model = 'a_f_m_bevhills_01',
+			male = {
+				[1] = {
+					['mask_1']    = 0,
+					['mask_2']    = 0,
+					['arms']      = 0,
+					['tshirt_1']  = 15,
+					['tshirt_2']  = 0,
+					['torso_1']   = 86,
+					['torso_2']   = 0,
+					['bproof_1']  = 0,
+					['bproof_2']  = 0,
+					['decals_1']  = 0,
+					['decals_2']  = 0,
+					['chain_1']   = 0,
+					['chain_2']   = 0,
+					['pants_1']   = 10,
+					['pants_2']   = 2,
+					['shoes_1']   = 56,
+					['shoes_2']   = 0,
+					['helmet_1']  = 34,
+					['helmet_2']  = 0,
+					['glasses_1'] = 34,
+					['glasses_2'] = 1,
+				},
+				[2] = {
+					['mask_1']    = 0,
+					['mask_2']    = 0,
+					['arms']      = 0,
+					['tshirt_1']  = 15,
+					['tshirt_2']  = 0,
+					['torso_1']   = 86,
+					['torso_2']   = 0,
+					['bproof_1']  = 0,
+					['bproof_2']  = 0,
+					['decals_1']  = 0,
+					['decals_2']  = 0,
+					['chain_1']   = 0,
+					['chain_2']   = 0,
+					['pants_1']   = 10,
+					['pants_2']   = 2,
+					['shoes_1']   = 56,
+					['shoes_2']   = 0,
+					['helmet_1']  = 34,
+					['helmet_2']  = 0,
+					['glasses_1'] = 34,
+					['glasses_2'] = 1,
+				},
+			},
+			female = {
+				[1] = {
+					['mask_1']    = 0,
+					['mask_2']    = 0,
+					['arms']      = 0,
+					['tshirt_1']  = 15,
+					['tshirt_2']  = 0,
+					['torso_1']   = 86,
+					['torso_2']   = 0,
+					['bproof_1']  = 0,
+					['bproof_2']  = 0,
+					['decals_1']  = 0,
+					['decals_2']  = 0,
+					['chain_1']   = 0,
+					['chain_2']   = 0,
+					['pants_1']   = 10,
+					['pants_2']   = 2,
+					['shoes_1']   = 56,
+					['shoes_2']   = 0,
+					['helmet_1']  = 34,
+					['helmet_2']  = 0,
+					['glasses_1'] = 34,
+					['glasses_2'] = 1,
+				},
+			},
+		},
+	},
 }
 
-Config.MinorInjurWeapons = { -- Define which weapons cause small injuries
-    [Config.WeaponClasses['SMALL_CALIBER']] = true,
-    [Config.WeaponClasses['MEDIUM_CALIBER']] = true,
-    [Config.WeaponClasses['CUTTING']] = true,
-    [Config.WeaponClasses['WILDLIFE']] = true,
-    [Config.WeaponClasses['OTHER']] = true,
-    [Config.WeaponClasses['LIGHT_IMPACT']] = true,
+
+Config.BodyParts = {
+
+	-- ["0"] = { id = "hip", label = "Damaged Hipbone", levels = { ["default"] = "Damaged", ["10"] = "Damaged x2", ["20"] = "Damaged x3", ["30"] = "Damaged x3", ["40"] = "Damaged x3", ["50"] = "Damaged x3" } },
+	["0"] = { id = "hip", label = "Damaged Hipbone", levels = { ["default"] = "Damaged", ["10"] = "Damaged x2", ["20"] = "Damaged x3", ["30"] = "Damaged x3", ["40"] = "Damaged x3" } }, -- hip bone,
+	["10706"] = { id = "rclavicle", label = "Right Clavicle", levels = { ["default"] = "Damaged" } },                                                                                 --right clavicle
+	["64729"] = { id = "lclavicle", label = "Left Clavicle", levels = { ["default"] = "Damaged" } },                                                                                  --right clavicle
+	["14201"] = { id = "lfoot", label = "Left Foot", levels = { ["default"] = "Damaged" } },                                                                                          -- left foot
+	["18905"] = { id = "lhand", label = "Left Hand", levels = { ["default"] = "Damaged" } },                                                                                          -- left hand
+	["24816"] = { id = "lbdy", label = "Lower chest", levels = { ["default"] = "Damaged" } },                                                                                         -- lower chest
+	["24817"] = { id = "ubdy", label = "Upper Chest", levels = { ["default"] = "Damaged" } },                                                                                         -- Upper chest
+	["24818"] = { id = "shoulder", label = "Shoulder", levels = { ["default"] = "Damaged" } },                                                                                        -- shoulder
+	["28252"] = { id = "rforearm", label = "Right Forearm", levels = { ["default"] = "Damaged" } },                                                                                   -- right forearm
+	["36864"] = { id = "rleg", label = "Right leg", levels = { ["default"] = "Damaged" } },                                                                                           -- right lef
+	["39317"] = { id = "neck", label = "Neck", levels = { ["default"] = "Damaged" } },                                                                                                -- neck
+	["40269"] = { id = "ruparm", label = "Right Upper Arm", levels = { ["default"] = "Damaged" } },                                                                                   -- right upper arm
+	["45509"] = { id = "luparm", label = "Left Upper Arm", levels = { ["default"] = "Damaged" } },                                                                                    -- left upper arm
+	["51826"] = { id = "rthigh", label = "Right Thigh", levels = { ["default"] = "Damaged" } },                                                                                       -- right thigh
+	["52301"] = { id = "rfoot", label = "Right Foot", levels = { ["default"] = "Damaged" } },                                                                                         -- right foot
+	["57005"] = { id = "rhand", label = "Right Hand", levels = { ["default"] = "Damaged" } },                                                                                         -- right hand
+	["57597"] = { id = "5lumbar", label = "5th Lumbar vertabra", levels = { ["default"] = "Damaged" } },                                                                              --waist
+	["58271"] = { id = "lthigh", label = "Left Thigh", levels = { ["default"] = "Damaged" } },                                                                                        -- left thigh
+	["61163"] = { id = "lforearm", label = "Left forearm", levels = { ["default"] = "Damaged" } },                                                                                    -- left forearm
+	["63931"] = { id = "lleg", label = "Left Leg", levels = { ["default"] = "Damaged" } },                                                                                            -- left leg
+	["31086"] = { id = "head", label = "Head", levels = { ["default"] = "Damaged" } },                                                                                                -- head
 }
 
-Config.MajorInjurWeapons = { -- Define which weapons cause large injuries
-    [Config.WeaponClasses['HIGH_CALIBER']] = true,
-    [Config.WeaponClasses['HEAVY_IMPACT']] = true,
-    [Config.WeaponClasses['SHOTGUN']] = true,
-    [Config.WeaponClasses['EXPLOSIVE']] = true,
-}
+function Config.SendDistressCall(msg)
+	--[--] -- Quasar
 
-Config.AlwaysBleedChanceWeapons = { -- Define which weapons will always cause bleedign
-    [Config.WeaponClasses['SMALL_CALIBER']] = true,
-    [Config.WeaponClasses['MEDIUM_CALIBER']] = true,
-    [Config.WeaponClasses['CUTTING']] = true,
-    [Config.WeaponClasses['WILDLIFE']] = false,
-}
+	-- TriggerServerEvent('qs-smartphone:server:sendJobAlert', {message = msg, location = GetEntityCoords(PlayerPedId())}, "ambulance")
 
-Config.ForceInjuryWeapons = { -- Define which weapons will always cause injuries
-    [Config.WeaponClasses['HIGH_CALIBER']] = true,
-    [Config.WeaponClasses['HEAVY_IMPACT']] = true,
-    [Config.WeaponClasses['EXPLOSIVE']] = true,
-}
 
-Config.CriticalAreas = { -- Define body areas that will always cause bleeding if wearing armor or not
-    ['UPPER_BODY'] = { armored = false },
-    ['LOWER_BODY'] = { armored = true },
-    ['SPINE'] = { armored = true },
-}
+	--[--] -- GKS
+	-- local myPos = GetEntityCoords(PlayerPedId())
+	-- local GPS = 'GPS: ' .. myPos.x .. ', ' .. myPos.y
 
-Config.StaggerAreas = { -- Define body areas that will always cause staggering if wearing armor or not
-    ['SPINE'] = { armored = true, major = 60, minor = 30 },
-    ['UPPER_BODY'] = { armored = false, major = 60, minor = 30 },
-    ['LLEG'] = { armored = true, major = 100, minor = 85 },
-    ['RLEG'] = { armored = true, major = 100, minor = 85 },
-    ['LFOOT'] = { armored = true, major = 100, minor = 100 },
-    ['RFOOT'] = { armored = true, major = 100, minor = 100 },
-}
+	-- ESX.TriggerServerCallback('gksphone:namenumber', function(Races)
+	--     local name = Races[2].firstname .. ' ' .. Races[2].lastname
 
-Config.WoundStates = { -- Translate wound alerts
-    Lang:t('states.irritated'),
-    Lang:t('states.quite_painful'),
-    Lang:t('states.painful'),
-    Lang:t('states.really_painful'),
-}
-
-Config.BleedingStates = { -- Translate bleeding alerts
-    { label = Lang:t('states.little_bleed') },
-    { label = Lang:t('states.bleed') },
-    { label = Lang:t('states.lot_bleed') },
-    { label = Lang:t('states.big_bleed') },
-}
-
-Config.MovementRate = { -- Set the player movement rate based on the level of damage they have
-    0.98,
-    0.96,
-    0.94,
-    0.92,
-}
-
-Config.Bones = { -- Correspond bone hash numbers to their label
-    [0]     = 'NONE',
-    [31085] = 'HEAD',
-    [31086] = 'HEAD',
-    [39317] = 'NECK',
-    [57597] = 'SPINE',
-    [23553] = 'SPINE',
-    [24816] = 'SPINE',
-    [24817] = 'SPINE',
-    [24818] = 'SPINE',
-    [10706] = 'UPPER_BODY',
-    [64729] = 'UPPER_BODY',
-    [11816] = 'LOWER_BODY',
-    [45509] = 'LARM',
-    [61163] = 'LARM',
-    [18905] = 'LHAND',
-    [4089]  = 'LFINGER',
-    [4090]  = 'LFINGER',
-    [4137]  = 'LFINGER',
-    [4138]  = 'LFINGER',
-    [4153]  = 'LFINGER',
-    [4154]  = 'LFINGER',
-    [4169]  = 'LFINGER',
-    [4170]  = 'LFINGER',
-    [4185]  = 'LFINGER',
-    [4186]  = 'LFINGER',
-    [26610] = 'LFINGER',
-    [26611] = 'LFINGER',
-    [26612] = 'LFINGER',
-    [26613] = 'LFINGER',
-    [26614] = 'LFINGER',
-    [58271] = 'LLEG',
-    [63931] = 'LLEG',
-    [2108]  = 'LFOOT',
-    [14201] = 'LFOOT',
-    [40269] = 'RARM',
-    [28252] = 'RARM',
-    [57005] = 'RHAND',
-    [58866] = 'RFINGER',
-    [58867] = 'RFINGER',
-    [58868] = 'RFINGER',
-    [58869] = 'RFINGER',
-    [58870] = 'RFINGER',
-    [64016] = 'RFINGER',
-    [64017] = 'RFINGER',
-    [64064] = 'RFINGER',
-    [64065] = 'RFINGER',
-    [64080] = 'RFINGER',
-    [64081] = 'RFINGER',
-    [64096] = 'RFINGER',
-    [64097] = 'RFINGER',
-    [64112] = 'RFINGER',
-    [64113] = 'RFINGER',
-    [36864] = 'RLEG',
-    [51826] = 'RLEG',
-    [20781] = 'RFOOT',
-    [52301] = 'RFOOT',
-}
-
-Config.BoneIndexes = { -- Correspond bone labels to their hash number
-    ['NONE'] = 0,
-    -- ['HEAD'] = 31085,
-    ['HEAD'] = 31086,
-    ['NECK'] = 39317,
-    -- ['SPINE'] = 57597,
-    -- ['SPINE'] = 23553,
-    -- ['SPINE'] = 24816,
-    -- ['SPINE'] = 24817,
-    ['SPINE'] = 24818,
-    -- ['UPPER_BODY'] = 10706,
-    ['UPPER_BODY'] = 64729,
-    ['LOWER_BODY'] = 11816,
-    -- ['LARM'] = 45509,
-    ['LARM'] = 61163,
-    ['LHAND'] = 18905,
-    -- ['LFINGER'] = 4089,
-    -- ['LFINGER'] = 4090,
-    -- ['LFINGER'] = 4137,
-    -- ['LFINGER'] = 4138,
-    -- ['LFINGER'] = 4153,
-    -- ['LFINGER'] = 4154,
-    -- ['LFINGER'] = 4169,
-    -- ['LFINGER'] = 4170,
-    -- ['LFINGER'] = 4185,
-    -- ['LFINGER'] = 4186,
-    -- ['LFINGER'] = 26610,
-    -- ['LFINGER'] = 26611,
-    -- ['LFINGER'] = 26612,
-    -- ['LFINGER'] = 26613,
-    ['LFINGER'] = 26614,
-    -- ['LLEG'] = 58271,
-    ['LLEG'] = 63931,
-    -- ['LFOOT'] = 2108,
-    ['LFOOT'] = 14201,
-    -- ['RARM'] = 40269,
-    ['RARM'] = 28252,
-    ['RHAND'] = 57005,
-    -- ['RFINGER'] = 58866,
-    -- ['RFINGER'] = 58867,
-    -- ['RFINGER'] = 58868,
-    -- ['RFINGER'] = 58869,
-    -- ['RFINGER'] = 58870,
-    -- ['RFINGER'] = 64016,
-    -- ['RFINGER'] = 64017,
-    -- ['RFINGER'] = 64064,
-    -- ['RFINGER'] = 64065,
-    -- ['RFINGER'] = 64080,
-    -- ['RFINGER'] = 64081,
-    -- ['RFINGER'] = 64096,
-    -- ['RFINGER'] = 64097,
-    -- ['RFINGER'] = 64112,
-    ['RFINGER'] = 64113,
-    -- ['RLEG'] = 36864,
-    ['RLEG'] = 51826,
-    -- ['RFOOT'] = 20781,
-    ['RFOOT'] = 52301,
-}
-
-Config.Weapons = { -- Correspond weapon names to their class number
-    [`WEAPON_STUNGUN`] = Config.WeaponClasses['NONE'],
-    [`WEAPON_STUNGUN_MP`] = Config.WeaponClasses['NONE'],
-    --[[ Small Caliber ]] --
-    [`WEAPON_PISTOL`] = Config.WeaponClasses['SMALL_CALIBER'],
-    [`WEAPON_COMBATPISTOL`] = Config.WeaponClasses['SMALL_CALIBER'],
-    [`WEAPON_APPISTOL`] = Config.WeaponClasses['SMALL_CALIBER'],
-    [`WEAPON_COMBATPDW`] = Config.WeaponClasses['SMALL_CALIBER'],
-    [`WEAPON_MACHINEPISTOL`] = Config.WeaponClasses['SMALL_CALIBER'],
-    [`WEAPON_MICROSMG`] = Config.WeaponClasses['SMALL_CALIBER'],
-    [`WEAPON_MINISMG`] = Config.WeaponClasses['SMALL_CALIBER'],
-    [`WEAPON_PISTOL_MK2`] = Config.WeaponClasses['SMALL_CALIBER'],
-    [`WEAPON_SNSPISTOL`] = Config.WeaponClasses['SMALL_CALIBER'],
-    [`WEAPON_SNSPISTOL_MK2`] = Config.WeaponClasses['SMALL_CALIBER'],
-    [`WEAPON_VINTAGEPISTOL`] = Config.WeaponClasses['SMALL_CALIBER'],
-
-    --[[ Medium Caliber ]] --
-    [`WEAPON_ADVANCEDRIFLE`] = Config.WeaponClasses['MEDIUM_CALIBER'],
-    [`WEAPON_ASSAULTSMG`] = Config.WeaponClasses['MEDIUM_CALIBER'],
-    [`WEAPON_BULLPUPRIFLE`] = Config.WeaponClasses['MEDIUM_CALIBER'],
-    [`WEAPON_BULLPUPRIFLE_MK2`] = Config.WeaponClasses['MEDIUM_CALIBER'],
-    [`WEAPON_CARBINERIFLE`] = Config.WeaponClasses['MEDIUM_CALIBER'],
-    [`WEAPON_CARBINERIFLE_MK2`] = Config.WeaponClasses['MEDIUM_CALIBER'],
-    [`WEAPON_COMPACTRIFLE`] = Config.WeaponClasses['MEDIUM_CALIBER'],
-    [`WEAPON_DOUBLEACTION`] = Config.WeaponClasses['MEDIUM_CALIBER'],
-    [`WEAPON_GUSENBERG`] = Config.WeaponClasses['MEDIUM_CALIBER'],
-    [`WEAPON_HEAVYPISTOL`] = Config.WeaponClasses['MEDIUM_CALIBER'],
-    [`WEAPON_MARKSMANPISTOL`] = Config.WeaponClasses['MEDIUM_CALIBER'],
-    [`WEAPON_PISTOL50`] = Config.WeaponClasses['MEDIUM_CALIBER'],
-    [`WEAPON_REVOLVER`] = Config.WeaponClasses['MEDIUM_CALIBER'],
-    [`WEAPON_REVOLVER_MK2`] = Config.WeaponClasses['MEDIUM_CALIBER'],
-    [`WEAPON_SMG`] = Config.WeaponClasses['MEDIUM_CALIBER'],
-    [`WEAPON_SMG_MK2`] = Config.WeaponClasses['MEDIUM_CALIBER'],
-    [`WEAPON_SPECIALCARBINE`] = Config.WeaponClasses['MEDIUM_CALIBER'],
-    [`WEAPON_SPECIALCARBINE_MK2`] = Config.WeaponClasses['MEDIUM_CALIBER'],
-
-    --[[ High Caliber ]] --
-    [`WEAPON_ASSAULTRIFLE`] = Config.WeaponClasses['HIGH_CALIBER'],
-    [`WEAPON_ASSAULTRIFLE_MK2`] = Config.WeaponClasses['HIGH_CALIBER'],
-    [`WEAPON_COMBATMG`] = Config.WeaponClasses['HIGH_CALIBER'],
-    [`WEAPON_COMBATMG_MK2`] = Config.WeaponClasses['HIGH_CALIBER'],
-    [`WEAPON_HEAVYSNIPER`] = Config.WeaponClasses['HIGH_CALIBER'],
-    [`WEAPON_HEAVYSNIPER_MK2`] = Config.WeaponClasses['HIGH_CALIBER'],
-    [`WEAPON_MARKSMANRIFLE`] = Config.WeaponClasses['HIGH_CALIBER'],
-    [`WEAPON_MARKSMANRIFLE_MK2`] = Config.WeaponClasses['HIGH_CALIBER'],
-    [`WEAPON_MG`] = Config.WeaponClasses['HIGH_CALIBER'],
-    [`WEAPON_MINIGUN`] = Config.WeaponClasses['HIGH_CALIBER'],
-    [`WEAPON_MUSKET`] = Config.WeaponClasses['HIGH_CALIBER'],
-    [`WEAPON_RAILGUN`] = Config.WeaponClasses['HIGH_CALIBER'],
-    [`WEAPON_HEAVYRIFLE`] = Config.WeaponClasses['HIGH_CALIBER'],
-
-    --[[ Shotguns ]] --
-    [`WEAPON_ASSAULTSHOTGUN`] = Config.WeaponClasses['SHOTGUN'],
-    [`WEAPON_BULLUPSHOTGUN`] = Config.WeaponClasses['SHOTGUN'],
-    [`WEAPON_DBSHOTGUN`] = Config.WeaponClasses['SHOTGUN'],
-    [`WEAPON_HEAVYSHOTGUN`] = Config.WeaponClasses['SHOTGUN'],
-    [`WEAPON_PUMPSHOTGUN`] = Config.WeaponClasses['SHOTGUN'],
-    [`WEAPON_PUMPSHOTGUN_MK2`] = Config.WeaponClasses['SHOTGUN'],
-    [`WEAPON_SAWNOFFSHOTGUN`] = Config.WeaponClasses['SHOTGUN'],
-    [`WEAPON_SWEEPERSHOTGUN`] = Config.WeaponClasses['SHOTGUN'],
-
-    --[[ Animals ]]                                            --
-    [`WEAPON_ANIMAL`] = Config.WeaponClasses['WILDLIFE'],      -- Animal
-    [`WEAPON_COUGAR`] = Config.WeaponClasses['WILDLIFE'],      -- Cougar
-    [`WEAPON_BARBED_WIRE`] = Config.WeaponClasses['WILDLIFE'], -- Barbed Wire
-
-    --[[ Cutting Weapons ]]                                    --
-    [`WEAPON_BATTLEAXE`] = Config.WeaponClasses['CUTTING'],
-    [`WEAPON_BOTTLE`] = Config.WeaponClasses['CUTTING'],
-    [`WEAPON_DAGGER`] = Config.WeaponClasses['CUTTING'],
-    [`WEAPON_HATCHET`] = Config.WeaponClasses['CUTTING'],
-    [`WEAPON_KNIFE`] = Config.WeaponClasses['CUTTING'],
-    [`WEAPON_MACHETE`] = Config.WeaponClasses['CUTTING'],
-    [`WEAPON_SWITCHBLADE`] = Config.WeaponClasses['CUTTING'],
-
-    --[[ Light Impact ]] --
-    [`WEAPON_KNUCKLE`] = Config.WeaponClasses['LIGHT_IMPACT'],
-
-    --[[ Heavy Impact ]] --
-    [`WEAPON_BAT`] = Config.WeaponClasses['HEAVY_IMPACT'],
-    [`WEAPON_CROWBAR`] = Config.WeaponClasses['HEAVY_IMPACT'],
-    [`WEAPON_FIREEXTINGUISHER`] = Config.WeaponClasses['HEAVY_IMPACT'],
-    [`WEAPON_FIRWORK`] = Config.WeaponClasses['HEAVY_IMPACT'],
-    [`WEAPON_GOLFLCUB`] = Config.WeaponClasses['HEAVY_IMPACT'],
-    [`WEAPON_HAMMER`] = Config.WeaponClasses['HEAVY_IMPACT'],
-    [`WEAPON_PETROLCAN`] = Config.WeaponClasses['HEAVY_IMPACT'],
-    [`WEAPON_POOLCUE`] = Config.WeaponClasses['HEAVY_IMPACT'],
-    [`WEAPON_WRENCH`] = Config.WeaponClasses['HEAVY_IMPACT'],
-    [`WEAPON_RAMMED_BY_CAR`] = Config.WeaponClasses['HEAVY_IMPACT'],
-    [`WEAPON_RUN_OVER_BY_CAR`] = Config.WeaponClasses['HEAVY_IMPACT'],
-
-    --[[ Explosives ]] --
-    [`WEAPON_EXPLOSION`] = Config.WeaponClasses['EXPLOSIVE'],
-    [`WEAPON_GRENADE`] = Config.WeaponClasses['EXPLOSIVE'],
-    [`WEAPON_COMPACTLAUNCHER`] = Config.WeaponClasses['EXPLOSIVE'],
-    [`WEAPON_HOMINGLAUNCHER`] = Config.WeaponClasses['EXPLOSIVE'],
-    [`WEAPON_PIPEBOMB`] = Config.WeaponClasses['EXPLOSIVE'],
-    [`WEAPON_PROXMINE`] = Config.WeaponClasses['EXPLOSIVE'],
-    [`WEAPON_RPG`] = Config.WeaponClasses['EXPLOSIVE'],
-    [`WEAPON_STICKYBOMB`] = Config.WeaponClasses['EXPLOSIVE'],
-    [`WEAPON_HELI_CRASH`] = Config.WeaponClasses['EXPLOSIVE'],
-    [`WEAPON_EMPLAUNCHER`] = Config.WeaponClasses['EXPLOSIVE'],
-
-    --[[ Other ]]                                                   --
-    [`WEAPON_FALL`] = Config.WeaponClasses['OTHER'],                -- Fall
-    [`WEAPON_HIT_BY_WATER_CANNON`] = Config.WeaponClasses['OTHER'], -- Water Cannon
-
-    --[[ Fire ]]                                                    --
-    [`WEAPON_ELECTRIC_FENCE`] = Config.WeaponClasses['FIRE'],
-    [`WEAPON_FIRE`] = Config.WeaponClasses['FIRE'],
-    [`WEAPON_MOLOTOV`] = Config.WeaponClasses['FIRE'],
-    [`WEAPON_FLARE`] = Config.WeaponClasses['FIRE'],
-    [`WEAPON_FLAREGUN`] = Config.WeaponClasses['FIRE'],
-
-    --[[ Suffocate ]]                                                     --
-    [`WEAPON_DROWNING`] = Config.WeaponClasses['SUFFOCATING'],            -- Drowning
-    [`WEAPON_DROWNING_IN_VEHICLE`] = Config.WeaponClasses['SUFFOCATING'], -- Drowning Veh
-    [`WEAPON_EXHAUSTION`] = Config.WeaponClasses['SUFFOCATING'],          -- Exhaust
-    [`WEAPON_BZGAS`] = Config.WeaponClasses['SUFFOCATING'],
-    [`WEAPON_SMOKEGRENADE`] = Config.WeaponClasses['SUFFOCATING'],
-}
-
-Config.VehicleSettings = { -- Enable or disable vehicle extras when pulling them from the ambulance job vehicle spawner
-    ['car1'] = {           -- Model name
-        ['extras'] = {
-            ['1'] = false, -- on/off
-            ['2'] = true,
-            ['3'] = true,
-            ['4'] = true,
-            ['5'] = true,
-            ['6'] = true,
-            ['7'] = true,
-            ['8'] = true,
-            ['9'] = true,
-            ['10'] = true,
-            ['11'] = true,
-            ['12'] = true,
-        }
-    },
-    ['car2'] = {
-        ['extras'] = {
-            ['1'] = false,
-            ['2'] = true,
-            ['3'] = true,
-            ['4'] = true,
-            ['5'] = true,
-            ['6'] = true,
-            ['7'] = true,
-            ['8'] = true,
-            ['9'] = true,
-            ['10'] = true,
-            ['11'] = true,
-            ['12'] = true,
-        }
-    }
-}
-
--- Medical role progression and routing
-Config.MedicRanks = {
-    [0] = {
-        label = 'Residente',
-        skills = { 'basic_care', 'cpr' },
-        description = 'Puede realizar RCP y estabilizar signos vitales básicos.'
-    },
-    [1] = {
-        label = 'Paramédico',
-        skills = { 'basic_care', 'cpr', 'pain_management', 'bandage' },
-        description = 'Capacitado para medicación ligera y vendajes intermedios.'
-    },
-    [2] = {
-        label = 'Especialista',
-        skills = { 'basic_care', 'cpr', 'pain_management', 'bandage', 'shock' },
-        description = 'Habilitado para controlar shock y hemorragias avanzadas.'
-    },
-    [3] = {
-        label = 'Médico Jefe',
-        skills = { 'basic_care', 'cpr', 'pain_management', 'bandage', 'shock', 'advanced_meds' },
-        description = 'Desbloquea toda la medicación y coordinación de traslados.'
-    }
-}
-
-Config.TransferRoutes = {
-    {
-        name = 'Pillbox Hill → Sandy Shores',
-        from = vector3(308.36, -595.25, 43.28),
-        to = vector3(1827.02, 3674.52, 33.28),
-        note = 'Ruta rápida para traumas desde la ciudad al desierto.'
-    },
-    {
-        name = 'Pillbox Hill → Paleto',
-        from = vector3(308.36, -595.25, 43.28),
-        to = vector3(-254.54, 6331.78, 32.43),
-        note = 'Traslado avanzado para cirugías en el norte.'
-    },
-    {
-        name = 'Sandy Shores → Pillbox Hill',
-        from = vector3(1827.02, 3674.52, 33.28),
-        to = vector3(298.74, -599.33, 43.29),
-        note = 'Retorno a la ciudad con soporte vital.'
-    }
-}
-
-Config.PointsOfInterest = {
-    { label = 'Trauma Center', coords = vector3(307.33, -594.44, 43.28) },
-    { label = 'Farmacia hospitalaria', coords = vector3(312.41, -592.31, 43.29) },
-    { label = 'Helipuerto EMS', coords = vector3(351.58, -587.45, 74.16) }
-}
+	--     TriggerServerEvent('gksphone:jbmessage', name, Races[1].phone_number, msg, '', GPS, "ambulance")
+	-- end)
+end
