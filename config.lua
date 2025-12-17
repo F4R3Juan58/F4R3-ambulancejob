@@ -1,4 +1,4 @@
-lib.locale()
+lib.locale('es')
 
 Config                         = {}
 
