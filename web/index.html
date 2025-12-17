@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel EMS</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app" class="hidden">
+        <header class="panel__header">
+            <div>
+                <p class="panel__overline" id="panel-subtitle">Ars Ambulance Job</p>
+                <h1 class="panel__title" id="panel-title">Panel EMS</h1>
+            </div>
+            <button id="close-btn" aria-label="Cerrar" class="ghost">&times;</button>
+        </header>
+
+        <nav class="tabs" id="tab-buttons"></nav>
+
+        <section class="tab-content">
+            <div id="tab-calls" class="tab hidden">
+                <div class="tab__header">
+                    <h2 id="tab-calls-title"></h2>
+                    <p class="muted" id="tab-calls-desc"></p>
+                </div>
+                <div id="calls-list" class="cards"></div>
+            </div>
+
+            <div id="tab-patient" class="tab hidden">
+                <div class="tab__header">
+                    <h2 id="tab-patient-title"></h2>
+                    <p class="muted" id="tab-patient-desc"></p>
+                </div>
+                <div class="patient-grid" id="patient-info"></div>
+            </div>
+
+            <div id="tab-services" class="tab hidden">
+                <div class="tab__header">
+                    <h2 id="tab-services-title"></h2>
+                    <p class="muted" id="tab-services-desc"></p>
+                </div>
+                <div class="chips" id="service-list"></div>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

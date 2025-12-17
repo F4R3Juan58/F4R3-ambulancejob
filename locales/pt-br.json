@@ -53,5 +53,20 @@
 	"put_patient_in_vehicle": "Colocar cidadão no veículo",
 	"medics_online": "Existem paramédicos no ativo, comando desabilitado",
 	"wait_time": "Deves esperar %s segundos antes de poderes utilizar o comando",
-	"medic_coming": "Pedido SOS enviado"
+        "medic_coming": "Pedido SOS enviado",
+        "nui_title_distress": "Dispatch Board",
+        "nui_title_patient": "Patient Sheet",
+        "nui_tab_calls": "Calls",
+        "nui_tab_calls_desc": "Incoming alerts and distress calls",
+        "nui_tab_services": "Shortcuts",
+        "nui_tab_services_desc": "Quick utilities for EMS",
+        "nui_tab_patient": "Patient",
+        "nui_tab_patient_desc": "Vital signs and status",
+        "nui_service_gps": "Send GPS",
+        "nui_service_gps_desc": "Share your current position",
+        "nui_service_notify": "Notify squad",
+        "nui_service_notify_desc": "Send a quick in-city ping",
+        "nui_service_notify_feedback": "Notification sent to the squad",
+        "nui_waypoint_set": "Waypoint updated",
+        "nui_copied": "Call copied to clipboard"
 }

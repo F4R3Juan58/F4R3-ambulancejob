@@ -55,6 +55,21 @@
 	"wait_time": "Devi aspettare %s secondi prima di fare questo comando",
 	"medic_coming": "Chiamata inviata",
 	"logged_dead": "Hai quittato morto",
-	"revive_all": "Rianima Tutti i giocatori",
-	"revived_all": "Hai rianimato tutti i giocatori"
+        "revive_all": "Rianima Tutti i giocatori",
+        "revived_all": "Hai rianimato tutti i giocatori",
+        "nui_title_distress": "Dispatch Board",
+        "nui_title_patient": "Patient Sheet",
+        "nui_tab_calls": "Calls",
+        "nui_tab_calls_desc": "Incoming alerts and distress calls",
+        "nui_tab_services": "Shortcuts",
+        "nui_tab_services_desc": "Quick utilities for EMS",
+        "nui_tab_patient": "Patient",
+        "nui_tab_patient_desc": "Vital signs and status",
+        "nui_service_gps": "Send GPS",
+        "nui_service_gps_desc": "Share your current position",
+        "nui_service_notify": "Notify squad",
+        "nui_service_notify_desc": "Send a quick in-city ping",
+        "nui_service_notify_feedback": "Notification sent to the squad",
+        "nui_waypoint_set": "Waypoint updated",
+        "nui_copied": "Call copied to clipboard"
 }
