@@ -1,3 +1,4 @@
+const body = document.getElementById('body');
 const hud = document.getElementById('hud');
 const pulse = document.getElementById('pulse');
 const bleeding = document.getElementById('bleeding');
@@ -23,6 +24,8 @@ const toneClasses = ['stable', 'moderate', 'critical', 'info', 'muted'];
 
 function toggleHud(show) {
     hud.classList.toggle('hidden', !show);
+    body.classList.toggle('hidden', !show);
+    
 }
 
 function applyTone(element, tone, label) {
