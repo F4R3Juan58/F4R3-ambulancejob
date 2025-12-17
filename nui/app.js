@@ -85,16 +85,6 @@ function setPatientIdentity(name, note) {
     patientNote.textContent = note || '';
 }
 
-function setInjuries(list) {
-    injuries.innerHTML = '';
-    list.forEach((entry) => {
-        const li = document.createElement('li');
-        li.className = 'card';
-        li.innerHTML = `<span class="badge">${entry.severity}</span> ${entry.label}`;
-        injuries.appendChild(li);
-    });
-}
-
 function setInteractions(list) {
     interactions.innerHTML = '';
     if (!list || list.length === 0) {
