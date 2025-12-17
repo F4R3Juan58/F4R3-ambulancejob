@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMS HUD</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="hud" class="hidden">
+        <header>
+            <div class="title">Panel Médico</div>
+            <button id="close">×</button>
+        </header>
+        <section class="vitals">
+            <div>
+                <span class="label">Estado</span>
+                <span id="status">Estable</span>
+            </div>
+            <div>
+                <span class="label">Pulso</span>
+                <span id="pulse">0 bpm</span>
+            </div>
+            <div>
+                <span class="label">Hemorragia</span>
+                <span id="bleeding">Sin sangrado</span>
+            </div>
+            <div>
+                <span class="label">Shock</span>
+                <span id="shock">Normal</span>
+            </div>
+        </section>
+        <section>
+            <h4>Dolencias</h4>
+            <ul id="injuries"></ul>
+        </section>
+        <section>
+            <h4>Interacciones médicas</h4>
+            <div id="interactions" class="chips"></div>
+        </section>
+        <section>
+            <h4>Rutas de traslado</h4>
+            <ul id="routes"></ul>
+        </section>
+        <section>
+            <h4>Puntos de interés</h4>
+            <ul id="points"></ul>
+        </section>
+        <footer id="rank"></footer>
+    </div>
+    <div id="shock-toast" class="toast hidden">Paciente en shock</div>
+    <script src="app.js"></script>
+</body>
+</html>

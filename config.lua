@@ -473,3 +473,54 @@ Config.VehicleSettings = { -- Enable or disable vehicle extras when pulling them
         }
     }
 }
+
+-- Medical role progression and routing
+Config.MedicRanks = {
+    [0] = {
+        label = 'Residente',
+        skills = { 'basic_care', 'cpr' },
+        description = 'Puede realizar RCP y estabilizar signos vitales básicos.'
+    },
+    [1] = {
+        label = 'Paramédico',
+        skills = { 'basic_care', 'cpr', 'pain_management', 'bandage' },
+        description = 'Capacitado para medicación ligera y vendajes intermedios.'
+    },
+    [2] = {
+        label = 'Especialista',
+        skills = { 'basic_care', 'cpr', 'pain_management', 'bandage', 'shock' },
+        description = 'Habilitado para controlar shock y hemorragias avanzadas.'
+    },
+    [3] = {
+        label = 'Médico Jefe',
+        skills = { 'basic_care', 'cpr', 'pain_management', 'bandage', 'shock', 'advanced_meds' },
+        description = 'Desbloquea toda la medicación y coordinación de traslados.'
+    }
+}
+
+Config.TransferRoutes = {
+    {
+        name = 'Pillbox Hill → Sandy Shores',
+        from = vector3(308.36, -595.25, 43.28),
+        to = vector3(1827.02, 3674.52, 33.28),
+        note = 'Ruta rápida para traumas desde la ciudad al desierto.'
+    },
+    {
+        name = 'Pillbox Hill → Paleto',
+        from = vector3(308.36, -595.25, 43.28),
+        to = vector3(-254.54, 6331.78, 32.43),
+        note = 'Traslado avanzado para cirugías en el norte.'
+    },
+    {
+        name = 'Sandy Shores → Pillbox Hill',
+        from = vector3(1827.02, 3674.52, 33.28),
+        to = vector3(298.74, -599.33, 43.29),
+        note = 'Retorno a la ciudad con soporte vital.'
+    }
+}
+
+Config.PointsOfInterest = {
+    { label = 'Trauma Center', coords = vector3(307.33, -594.44, 43.28) },
+    { label = 'Farmacia hospitalaria', coords = vector3(312.41, -592.31, 43.29) },
+    { label = 'Helipuerto EMS', coords = vector3(351.58, -587.45, 74.16) }
+}
