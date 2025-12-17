@@ -5,6 +5,19 @@ local doctorCount = 0
 local doctorCalled = false
 local Doctors = {}
 
+local function hasMedicSkill(player, skill)
+        if not player or not player.PlayerData.job then return false end
+        local grade = player.PlayerData.job.grade.level or player.PlayerData.job.grade
+        local rank = Config.MedicRanks[grade]
+        if not rank or not rank.skills then return false end
+        for _, entry in ipairs(rank.skills) do
+                if entry == skill then
+                        return true
+                end
+        end
+        return false
+end
+
 -- Events
 
 -- Compatibility with txAdmin Menu's heal options.
@@ -150,16 +163,51 @@ RegisterNetEvent('hospital:server:SetArmor', function(amount)
 end)
 
 RegisterNetEvent('hospital:server:TreatWounds', function(playerId)
-	local src = source
-	local Player = QBCore.Functions.GetPlayer(src)
-	local Patient = QBCore.Functions.GetPlayer(playerId)
-	if Patient then
-		if Player.PlayerData.job.name == 'ambulance' then
-			exports['qb-inventory']:RemoveItem(src, 'bandage', 1, false, 'hospital:server:TreatWounds')
-			TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['bandage'], 'remove')
-			TriggerClientEvent('hospital:client:HealInjuries', Patient.PlayerData.source, 'full')
-		end
-	end
+        local src = source
+        local Player = QBCore.Functions.GetPlayer(src)
+        local Patient = QBCore.Functions.GetPlayer(playerId)
+        if Patient then
+                if Player.PlayerData.job.name == 'ambulance' then
+                        exports['qb-inventory']:RemoveItem(src, 'bandage', 1, false, 'hospital:server:TreatWounds')
+                        TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['bandage'], 'remove')
+                        TriggerClientEvent('hospital:client:HealInjuries', Patient.PlayerData.source, 'full')
+                end
+        end
+end)
+
+RegisterNetEvent('hospital:server:PerformCpr', function(playerId)
+        local src = source
+        local medic = QBCore.Functions.GetPlayer(src)
+        local patient = QBCore.Functions.GetPlayer(playerId)
+        if not medic or not patient then return end
+        if medic.PlayerData.job.name ~= 'ambulance' or not hasMedicSkill(medic, 'cpr') then
+                return TriggerClientEvent('QBCore:Notify', src, 'No tienes rango para aplicar RCP.', 'error')
+        end
+
+        TriggerClientEvent('hospital:client:ReceiveCpr', patient.PlayerData.source, medic.PlayerData.charinfo.firstname)
+end)
+
+RegisterNetEvent('hospital:server:ApplyMedication', function(playerId, medType)
+        local src = source
+        local medic = QBCore.Functions.GetPlayer(src)
+        local patient = QBCore.Functions.GetPlayer(playerId)
+        if not medic or not patient then return end
+        if medic.PlayerData.job.name ~= 'ambulance' then return end
+
+        local skill = medType == 'shock' and 'shock' or medType == 'advanced' and 'advanced_meds' or 'pain_management'
+        if not hasMedicSkill(medic, skill) then
+                return TriggerClientEvent('QBCore:Notify', src, 'No tienes el rango necesario.', 'error')
+        end
+
+        if medType == 'bandage' then
+                exports['qb-inventory']:RemoveItem(src, 'bandage', 1, false, 'hospital:server:ApplyMedication')
+        elseif medType == 'painkillers' then
+                exports['qb-inventory']:RemoveItem(src, 'painkillers', 1, false, 'hospital:server:ApplyMedication')
+        elseif medType == 'advanced' then
+                exports['qb-inventory']:RemoveItem(src, 'firstaid', 1, false, 'hospital:server:ApplyMedication')
+        end
+
+        TriggerClientEvent('hospital:client:ReceiveMedication', patient.PlayerData.source, medType)
 end)
 
 RegisterNetEvent('hospital:server:AddDoctor', function(job)
