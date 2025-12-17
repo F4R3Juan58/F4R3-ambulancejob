@@ -85,6 +85,24 @@ if GetResourceState('ox_target') == 'started' then
 
         exports.ox_target:addGlobalPlayer(options)
     end
+
+    function addGlobalPed(_options)
+        local options = {}
+
+        for i = 1, #_options do
+            local option = _options[i]
+
+            options[#options + 1] = {
+                label = option.label,
+                icon = option.icon,
+                groups = option.groups,
+                canInteract = option.cn,
+                onSelect = option.fn
+            }
+        end
+
+        exports.ox_target:addGlobalPed(options)
+    end
 elseif GetResourceState('qb-target') == 'started' then
     local function convertJobs(groups)
         if not groups then return nil end
@@ -192,6 +210,25 @@ elseif GetResourceState('qb-target') == 'started' then
         end
 
         exports['qb-target']:AddGlobalPlayer({ options = options })
+    end
+
+    function addGlobalPed(_options)
+        local options = {}
+
+        for i = 1, #_options do
+            local option = _options[i]
+            local jobs = convertJobs(option.groups)
+
+            options[#options + 1] = {
+                label = option.label,
+                icon = option.icon,
+                job = jobs,
+                canInteract = option.cn,
+                action = option.fn
+            }
+        end
+
+        exports['qb-target']:AddGlobalPed({ options = options })
     end
 else
     Wait(3000)
